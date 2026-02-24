@@ -10,9 +10,8 @@ const loading = ref(true);
 onMounted(async () => {
   try {
     const res = await getConciliaciones();
-    console.log('====================================');
-    console.log(res);
-    console.log('====================================');
+   
+    console.log('Datos de conciliaciones:', res.data);
     conciliaciones.value = res.data;
   } catch (error) {
     console.error('Error al obtener conciliaciones:', error);
@@ -20,7 +19,9 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
 function formatted(rawDate) {
+  if (!rawDate) return "Fecha no registrada";
   return new Date(rawDate).toLocaleString("es-AR", {
     year: "numeric",
     month: "long",
@@ -34,88 +35,85 @@ function formatted(rawDate) {
 function goToDetail(id) {
   router.push({ name: 'conciliacion-detail', params: { id } })
 }
+
+// Función de seguridad para mostrar el número
+// Intenta sacar el número de la orden, y si no existe, usa el ID de la conciliación
+function getOrderNumber(c) {
+  return c.orden?.numeroOrden || c.orden?.id || c.id || 'S/N';
+}
 </script>
+
 <template>
-  <section class="py-24 bg-gray-50">
+  <section class="py-24 bg-gray-50 min-h-screen font-inter">
     <div class="max-w-5xl mx-auto px-6">
 
-      <!-- Título -->
       <h1 class="text-5xl font-inter-tight font-bold tracking-tight text-gray-900">
         Conciliación de órdenes
       </h1>
 
-      <!-- Loading -->
-      <p v-if="loading" class="text-gray-500 mt-6 text-lg">
+      <p v-if="loading" class="text-gray-500 mt-6 text-lg animate-pulse">
         Cargando conciliaciones...
       </p>
 
-      <!-- Lista -->
       <div v-else class="mt-12 space-y-8">
 
         <div v-for="c in conciliaciones" :key="c.id" @click="goToDetail(c.id)"
-          class="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+          class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-200 hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer">
 
-          <!-- Fecha -->
-          <p class="text-sm text-gray-500 mb-1">
-            Fecha de conciliación:
-            <span class="font-medium text-gray-700">
-              {{ formatted(c.orden.fechaPesajeFinal) }}
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+            Finalizado el: 
+            <span class="text-gray-900 ml-1">
+              {{ formatted(c.orden?.fechaPesajeFinal) }}
             </span>
           </p>
 
-          <!-- Título + Estado -->
           <div class="flex items-center justify-between mt-1">
-
-            <h2 class="text-3xl font-semibold text-gray-900 tracking-tight">
-              Orden #{{ c.orden.numeroOrden }}
+            <h2 class="text-4xl font-inter-tight font-bold text-gray-900 tracking-tighter">
+              Orden #{{ getOrderNumber(c) }}
             </h2>
 
             <span
-              class="inline-flex items-center rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-600 border border-blue-200">
-              {{ c.orden.estado }}
+              class="inline-flex items-center rounded-full bg-green-50 px-4 py-1.5 text-xs font-black text-green-600 border border-green-100 uppercase tracking-tighter">
+              {{ c.orden?.estado?.split('_').pop() || 'FINALIZADA' }}
             </span>
           </div>
 
-          <!-- Datos -->
-          <div class="grid grid-cols-3 gap-6 mt-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
 
-            <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-              <p class="text-sm text-gray-500">Peso inicial</p>
-              <p class="text-xl font-semibold text-gray-800 mt-1">
-                {{ c.pesoInicial }} kg
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 group-hover:bg-white transition-colors">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Peso inicial</p>
+              <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ c.pesoInicial }} <span class="text-sm font-medium">kg</span>
               </p>
             </div>
 
-            <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-              <p class="text-sm text-gray-500">Peso final</p>
-              <p class="text-xl font-semibold text-gray-800 mt-1">
-                {{ c.pesoFinal }} kg
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 group-hover:bg-white transition-colors">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Peso final</p>
+              <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ c.pesoFinal }} <span class="text-sm font-medium">kg</span>
               </p>
             </div>
 
-            <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
-              <p class="text-sm text-gray-500">Producto cargado</p>
-              <p class="text-xl font-semibold text-gray-800 mt-1">
-                {{ c.productoCargado }}
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 group-hover:bg-white transition-colors">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Neto cargado</p>
+              <p class="text-2xl font-bold text-blue-600 mt-1">
+                {{ c.netoCargado || (c.pesoFinal - c.pesoInicial) }} <span class="text-sm font-medium">kg</span>
               </p>
             </div>
           </div>
 
-          <!-- Botón -->
-          <button @click="goToDetail(c.id)"
-            class="mt-8 w-full md:w-auto px-8 py-3 bg-gray-900 text-white text-base rounded-full font-semibold hover:bg-gray-800 transition">
-            Ver más detalles
-          </button>
+          <div class="mt-8 flex items-center text-gray-900 font-bold text-sm uppercase tracking-widest">
+            Ver Detalle
+            <span class="ml-2 transform group-hover:translate-x-2 transition-transform text-lg">→</span>
+          </div>
 
         </div>
       </div>
 
-      <!-- Descripción -->
-      <p class="text-lg text-gray-600 leading-relaxed mt-16 text-center">
-        Estas son órdenes cerradas (estado 4), con su conciliación final ya emitida.
+      <p class="text-sm text-gray-400 font-medium mt-16 text-center uppercase tracking-widest">
+        Sistema de conciliación automática • Estado 4
       </p>
 
     </div>
   </section>
-
 </template>

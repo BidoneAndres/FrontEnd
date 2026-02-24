@@ -8,6 +8,8 @@ import CamionView from '@/views/CamionView.vue'
 import ConciliacionView from '@/views/ConciliacionView.vue'
 import OrdenMonitorView from '@/views/OrdenMonitorView.vue'
 import ConciliacionDetailComponent from '@/components/ConciliacionDetailComponent.vue'
+import ListaDeOrdenes from '@/views/ListaDeOrdenes.vue'
+import ConciliacionDetailView from '@/views/ConciliacionDetailView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -49,7 +51,7 @@ const router = createRouter({
     {
       path: '/conciliaciones/:id',
       name: 'conciliacion-detail',
-      component: ConciliacionDetailComponent,
+      component: ConciliacionDetailView,
       props: true, 
     },
     {
@@ -58,6 +60,11 @@ const router = createRouter({
       component: OrdenMonitorView,
       props: true
     },
+    {
+      path: '/home',
+      name: 'ordenes',
+      component: ListaDeOrdenes
+    }
 
   ],
 })
