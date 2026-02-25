@@ -19,7 +19,7 @@
             <div>
               <span class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] block mb-2">Informe Final de Carga</span>
               <h1 class="text-5xl font-inter-tight font-bold text-gray-900 tracking-tighter">
-                Orden #{{ conciliacion.orden?.numeroOrden }}
+                Orden #{{ conciliacion.orden?.id }}
               </h1>
               <p class="text-gray-400 text-sm font-medium mt-1">
                 Conciliación procesada ID: {{ conciliacion.id }}
@@ -44,7 +44,7 @@
             </div>
             <div class="p-8 bg-gray-900 rounded-[2rem] shadow-2xl shadow-blue-900/20">
               <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Neto por Balanza</p>
-              <p class="text-4xl font-bold text-white tabular-nums">{{ conciliacion.netoCargado }} <span class="text-lg font-medium text-blue-400">kg</span></p>
+              <p class="text-4xl font-bold text-white tabular-nums">{{ conciliacion.netoPorBalanza }}<span class="text-lg font-medium text-blue-400">kg</span></p>
             </div>
           </div>
         </div>
@@ -73,17 +73,11 @@
           </div>
 
           <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm flex flex-col justify-between">
-            <div class="mb-8">
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Producto Registrado</p>
-              <p class="text-4xl font-bold text-gray-900 tracking-tighter">
-                {{ conciliacion.orden?.producto?.producto || 'Sin especificar' }}
-              </p>
-            </div>
 
             <div class="p-6 bg-red-50 rounded-3xl border border-red-100 relative overflow-hidden">
               <div class="absolute -right-4 -bottom-4 text-red-100 text-6xl font-black opacity-50">!</div>
               <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1 relative z-10">Diferencia Balanza vs Caudalímetro</p>
-              <p class="text-3xl font-bold text-red-600 relative z-10">{{ conciliacion.diferenciaCaudalimetro || '0' }} kg</p>
+              <p class="text-3xl font-bold text-red-600 relative z-10">{{ conciliacion.diferenciaBalanzaCaudalimetro }} kg</p>
               <p class="text-[10px] text-red-400 mt-2 font-medium italic relative z-10">* Desviación calculada por sistema</p>
             </div>
           </div>
@@ -113,9 +107,9 @@ async function fetchDetalleConciliacion() {
   try {
     loading.value = true
     const token = localStorage.getItem('token')
-    const numeroOrden = route.params.id // Este es el número que viene de la URL
+    const numeroOrden = route.params.id 
 
-    // Ajustamos el endpoint para buscar por numero de orden
+    console.log("Numero de orden enviado:", numeroOrden)
     const res = await axios.get(`http://localhost:8080/api/v1/conciliacion/orden/${numeroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
