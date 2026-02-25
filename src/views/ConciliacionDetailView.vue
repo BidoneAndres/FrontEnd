@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-16 font-inter">
     <div class="max-w-5xl mx-auto px-6">
-      
+
       <button @click="$router.back()" class="flex items-center text-gray-400 hover:text-gray-900 transition-colors mb-8 font-bold text-xs uppercase tracking-widest">
         <span class="mr-2">←</span> Volver al listado
       </button>
@@ -11,7 +11,7 @@
       </div>
 
       <div v-else-if="conciliacion" class="space-y-8 animate-in fade-in duration-700">
-        
+
         <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50"></div>
 
@@ -50,7 +50,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
+
           <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm">
             <h3 class="text-xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4 flex items-center gap-2">
               <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
@@ -116,10 +116,10 @@ async function fetchDetalleConciliacion() {
     const numeroOrden = route.params.id // Este es el número que viene de la URL
 
     // Ajustamos el endpoint para buscar por numero de orden
-    const res = await axios.get(`http://localhost:8080/api/v1/conciliacion/orden/${numeroOrden}`, {
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/conciliacion/orden/${numeroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    
+
     conciliacion.value = res.data
   } catch (error) {
     console.error('Error al cargar detalle:', error)

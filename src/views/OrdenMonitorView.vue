@@ -2,7 +2,7 @@
   <section class="py-20 bg-gray-50 min-h-screen font-inter">
     <div class="max-w-6xl mx-auto px-6 space-y-10">
 
-      <div 
+      <div
         class="cursor-pointer select-none group"
         @click="toggleDetalle"
       >
@@ -14,7 +14,7 @@
         </h1>
       </div>
 
-      <div 
+      <div
         v-if="showDetalle"
         class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mt-6 space-y-8 animate-in fade-in slide-in-from-top-4 duration-300"
       >
@@ -79,7 +79,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div 
+        <div
           :class="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
           class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center transition-all duration-500"
         >
@@ -124,18 +124,18 @@
               {{ orden.producto?.producto || 'SIN PRODUCTO' }}
             </h3>
           </div>
-          
+
           <div class="text-center pb-1">
             <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">ETA (Llenado)</p>
-            
+
             <p v-if="orden.preset && masaActual < orden.preset" class="text-3xl font-black text-gray-900 tabular-nums">
               {{ etaDisplay }}
             </p>
-            
+
             <p v-else-if="orden.preset && masaActual > orden.preset" class="text-3xl font-black text-red-600 animate-pulse tabular-nums">
               ¡ATENCION!
             </p>
-            
+
             <p v-else-if="orden.preset" class="text-3xl font-black text-green-600 tabular-nums">
               FINALIZADO
             </p>
@@ -151,14 +151,14 @@
         </div>
 
         <div class="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
-          <div 
+          <div
             class="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-700 ease-out shadow-[0_0_20px_rgba(37,99,235,0.4)]"
             :style="{ width: porcentajeCarga + '%' }"
           >
             <div class="w-full h-full animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
           </div>
         </div>
-        
+
         <div class="flex justify-between mt-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
           <span>0 kg</span>
           <span class="text-gray-900 font-bold">Masa Actual: {{ masaActual }} kg</span>
@@ -203,14 +203,14 @@ const orden = ref({})
 const temperatura = ref(0)
 const caudal = ref(0)
 const densidad = ref(0)
-const masaActual = ref(0) 
+const masaActual = ref(0)
 
 const chartCanvas = ref(null)
 const chartCaudalCanvas = ref(null)
 const showDetalle = ref(false)
 
 const route = useRoute()
-const numeroOrden = route.params.id 
+const numeroOrden = route.params.id
 
 let chartInstance = null
 let chartCaudalInstance = null
@@ -219,7 +219,7 @@ let timerInterval = null
 const tiempoTranscurridoDisplay = ref('--:--:--')
 
 const porcentajeCarga = computed(() => {
-  const objetivo = orden.value?.preset || 30000; 
+  const objetivo = orden.value?.preset || 30000;
   if (objetivo === 0) return 0;
   const calculo = (masaActual.value / objetivo) * 100;
   return Math.min(Math.round(calculo), 100);
@@ -267,7 +267,7 @@ async function fetchOrden() {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const res = await axios.get(`http://localhost:8080/api/v1/orden/${numeroOrden}`, {
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/orden/${numeroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     orden.value = res.data
@@ -285,7 +285,7 @@ async function fetchOrden() {
 async function fetchHistorial(nroOrden) {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get(`http://localhost:8080/api/v1/carga/${nroOrden}`, {
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     const historial = res.data
@@ -327,7 +327,7 @@ onMounted(async () => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { 
+      scales: {
         y: { grid: { color: '#f3f4f6' }, beginAtZero: false },
         x: { grid: { display: false } }
       }

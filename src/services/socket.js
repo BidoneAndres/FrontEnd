@@ -5,7 +5,7 @@ let stompClient = null
 
 export function connectSocket(numeroOrden, token, callback) {
 
-  const socket = new SockJS('http://localhost:8080/temperaturas')
+  const socket = new SockJS('https://cernikiw3.chickenkiller.com/temperaturas')
 
   stompClient = new Client({
     webSocketFactory: () => socket,

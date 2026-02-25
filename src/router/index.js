@@ -7,7 +7,6 @@ import ChoferView from '@/views/ChoferView.vue'
 import CamionView from '@/views/CamionView.vue'
 import ConciliacionView from '@/views/ConciliacionView.vue'
 import OrdenMonitorView from '@/views/OrdenMonitorView.vue'
-import ConciliacionDetailComponent from '@/components/ConciliacionDetailComponent.vue'
 import ListaDeOrdenes from '@/views/ListaDeOrdenes.vue'
 import ConciliacionDetailView from '@/views/ConciliacionDetailView.vue'
 const router = createRouter({
@@ -52,7 +51,7 @@ const router = createRouter({
       path: '/conciliaciones/:id',
       name: 'conciliacion-detail',
       component: ConciliacionDetailView,
-      props: true, 
+      props: true,
     },
     {
       path: '/monitor/:id',
