@@ -127,7 +127,22 @@
           
           <div class="text-center pb-1">
             <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">ETA (Llenado)</p>
-            <p class="text-3xl font-black text-gray-900 tabular-nums">{{ etaDisplay }}</p>
+            
+            <p v-if="orden.preset && masaActual < orden.preset" class="text-3xl font-black text-gray-900 tabular-nums">
+              {{ etaDisplay }}
+            </p>
+            
+            <p v-else-if="orden.preset && masaActual > orden.preset" class="text-3xl font-black text-red-600 animate-pulse tabular-nums">
+              ¡ATENCION!
+            </p>
+            
+            <p v-else-if="orden.preset" class="text-3xl font-black text-green-600 tabular-nums">
+              FINALIZADO
+            </p>
+
+            <p v-else class="text-3xl font-black text-gray-300 tabular-nums">
+              --:--:--
+            </p>
           </div>
 
           <div class="text-right">
