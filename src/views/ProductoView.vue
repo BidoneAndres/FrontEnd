@@ -155,15 +155,3 @@ function goToEdit(id) {
   </section>
 </template>
 
-<style scoped>
-.font-inter-tight { font-family: 'Inter Tight', sans-serif; }
-
-.animate-scale-up {
-  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes scaleUp {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-</style>
