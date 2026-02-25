@@ -78,9 +78,19 @@
         </div>
       </div>
 
-      <div class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center">
-        <h2 class="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">Estado Actual</h2>
-        <p class="text-4xl font-black italic tracking-tighter">{{ orden.estado || 'ESPERANDO...' }}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div 
+          :class="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
+          class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center transition-all duration-500"
+        >
+          <h2 class="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">Estado Actual</h2>
+          <p class="text-4xl font-black italic tracking-tighter">{{ orden.estado || 'ESPERANDO...' }}</p>
+        </div>
+
+        <div v-if="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA'" class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center">
+          <h2 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Tiempo de Carga</h2>
+          <p class="text-4xl font-black text-gray-900 tabular-nums">{{ tiempoTranscurridoDisplay }}</p>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -95,7 +105,7 @@
           <p class="text-6xl font-black text-blue-900 tracking-tighter group-hover:scale-110 transition-transform">
             {{ caudal }}
           </p>
-          <p class="text-xs font-bold text-blue-700 mt-4 uppercase tracking-[0.2em]">Caudal Actual</p>
+          <p class="text-xs font-bold text-blue-700 mt-4 uppercase tracking-[0.2em]">Caudal Actual (kg/h)</p>
         </div>
 
         <div class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-green-500 text-center group hover:bg-green-50 transition-colors">
@@ -114,6 +124,12 @@
               {{ orden.producto?.producto || 'SIN PRODUCTO' }}
             </h3>
           </div>
+          
+          <div class="text-center pb-1">
+            <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">ETA (Llenado)</p>
+            <p class="text-3xl font-black text-gray-900 tabular-nums">{{ etaDisplay }}</p>
+          </div>
+
           <div class="text-right">
             <span class="text-5xl font-black text-blue-600 tabular-nums">{{ porcentajeCarga }}%</span>
           </div>
@@ -168,7 +184,6 @@ import Chart from 'chart.js/auto'
 import { connectSocket, disconnectSocket } from '@/services/socket'
 import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 
-// --- ESTADOS (REFS) ---
 const orden = ref({})
 const temperatura = ref(0)
 const caudal = ref(0)
@@ -184,32 +199,66 @@ const numeroOrden = route.params.id
 
 let chartInstance = null
 let chartCaudalInstance = null
+let timerInterval = null
 
-// --- CÁLCULOS REACTIVOS ---
+const tiempoTranscurridoDisplay = ref('--:--:--')
+
 const porcentajeCarga = computed(() => {
   const objetivo = orden.value?.preset || 30000; 
   if (objetivo === 0) return 0;
-  
   const calculo = (masaActual.value / objetivo) * 100;
   return Math.min(Math.round(calculo), 100);
 });
 
-// --- FUNCIONES DE CARGA ---
+const etaDisplay = computed(() => {
+  const preset = orden.value?.preset || 0;
+  const masa = masaActual.value || 0;
+  const c = caudal.value || 0;
+
+  if (c <= 0 || masa >= preset) return '--:--:--';
+
+  const restanteKg = preset - masa;
+  const horasRestantes = restanteKg / c;
+  const segundosRestantes = Math.round(horasRestantes * 3600);
+
+  const h = Math.floor(segundosRestantes / 3600);
+  const m = Math.floor((segundosRestantes % 3600) / 60);
+  const s = segundosRestantes % 60;
+
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+});
+
+function updateTiempoTranscurrido() {
+  if (orden.value.estado === 'CARGANDO' || orden.value.estado === 2 || (typeof orden.value.estado === 'string' && orden.value.estado.includes('2'))) {
+    if (!orden.value.inicioCarga) {
+      tiempoTranscurridoDisplay.value = '00:00:00';
+      return;
+    }
+
+    const inicio = new Date(orden.value.inicioCarga).getTime();
+    const ahora = new Date().getTime();
+    const diff = Math.max(0, Math.floor((ahora - inicio) / 1000));
+
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+    tiempoTranscurridoDisplay.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  } else {
+    tiempoTranscurridoDisplay.value = '--:--:--';
+  }
+}
+
 async function fetchOrden() {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    
     const res = await axios.get(`http://localhost:8080/api/v1/orden/${numeroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    
     orden.value = res.data
-    // Sincronizamos la masa inicial desde la API
     if (res.data.ultimaMasaAcumulada) {
       masaActual.value = res.data.ultimaMasaAcumulada;
     }
-    
     if (orden.value.id) {
       await fetchHistorial(orden.value.numeroOrden)
     }
@@ -224,19 +273,15 @@ async function fetchHistorial(nroOrden) {
     const res = await axios.get(`http://localhost:8080/api/v1/carga/${nroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    
     const historial = res.data
     if (historial && historial.length > 0) {
       const ultimo = historial[historial.length - 1]
       temperatura.value = ultimo.temperatura || 0
       caudal.value = ultimo.caudal || 0
       densidad.value = ultimo.densidadProducto || 0
-      
-      // Aseguramos que masaActual tenga el último punto del historial
       if (ultimo.masaAcumulada) {
         masaActual.value = ultimo.masaAcumulada;
       }
-
       const labels = historial.map(d => d.timestamp ? d.timestamp.split(' ')[1] : 'S/T')
       if (chartInstance) {
         chartInstance.data.labels = labels
@@ -258,14 +303,11 @@ function toggleDetalle() {
   showDetalle.value = !showDetalle.value
 }
 
-// --- CICLO DE VIDA ---
 onMounted(async () => {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-
     await nextTick()
-
     const commonOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -275,7 +317,6 @@ onMounted(async () => {
         x: { grid: { display: false } }
       }
     }
-
     chartInstance = new Chart(chartCanvas.value, {
       type: 'line',
       data: {
@@ -292,7 +333,6 @@ onMounted(async () => {
       },
       options: commonOptions
     })
-
     chartCaudalInstance = new Chart(chartCaudalCanvas.value, {
       type: 'line',
       data: {
@@ -311,31 +351,22 @@ onMounted(async () => {
     })
 
     await fetchOrden()
+    timerInterval = setInterval(updateTiempoTranscurrido, 1000);
 
- 
     connectSocket(numeroOrden, token, (data) => {
-   
       if (data.masaAcumulada !== undefined) {
         masaActual.value = data.masaAcumulada;
       }
-
-    
       if (data.orden) {
         orden.value = data.orden;
-     
         if (data.orden.ultimaMasaAcumulada) {
             masaActual.value = data.orden.ultimaMasaAcumulada;
         }
       }
-
-
       if (data.temperatura !== undefined) temperatura.value = data.temperatura
       if (data.caudal !== undefined) caudal.value = data.caudal
       if (data.densidadProducto !== undefined) densidad.value = data.densidadProducto
-
       const ahora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-
-    
       if (chartInstance && data.temperatura !== undefined) {
         chartInstance.data.labels.push(ahora)
         chartInstance.data.datasets[0].data.push(data.temperatura)
@@ -345,7 +376,6 @@ onMounted(async () => {
         }
         chartInstance.update('none')
       }
-
       if (chartCaudalInstance && data.caudal !== undefined) {
         chartCaudalInstance.data.labels.push(ahora)
         chartCaudalInstance.data.datasets[0].data.push(data.caudal)
@@ -356,7 +386,6 @@ onMounted(async () => {
         chartCaudalInstance.update('none')
       }
     })
-
   } catch (err) {
     console.error("Error en monitor:", err)
   }
@@ -364,8 +393,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   disconnectSocket()
+  if (timerInterval) clearInterval(timerInterval)
   if (chartInstance) chartInstance.destroy()
   if (chartCaudalInstance) chartCaudalInstance.destroy()
 })
 </script>
-

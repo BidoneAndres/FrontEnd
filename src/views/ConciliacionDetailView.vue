@@ -1,4 +1,3 @@
-
 <template>
   <div class="min-h-screen bg-gray-50 py-16 font-inter">
     <div class="max-w-5xl mx-auto px-6">
@@ -7,24 +6,29 @@
         <span class="mr-2">←</span> Volver al listado
       </button>
 
-      <div v-if="loading" class="text-center py-20 animate-pulse text-gray-400">
-        Cargando auditoría de conciliación...
+      <div v-if="loading" class="text-center py-20 animate-pulse text-gray-400 font-bold uppercase tracking-widest">
+        Buscando auditoría de orden...
       </div>
 
-      <div v-else-if="conciliacion" class="space-y-8">
+      <div v-else-if="conciliacion" class="space-y-8 animate-in fade-in duration-700">
         
-        <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full opacity-50"></div>
+
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <div>
               <span class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] block mb-2">Informe Final de Carga</span>
               <h1 class="text-5xl font-inter-tight font-bold text-gray-900 tracking-tighter">
-                Orden #{{ conciliacion.orden?.numeroOrden || conciliacion.orden_id }}
+                Orden #{{ conciliacion.orden?.numeroOrden }}
               </h1>
+              <p class="text-gray-400 text-sm font-medium mt-1">
+                Conciliación procesada ID: {{ conciliacion.id }}
+              </p>
             </div>
             <div class="text-right">
               <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Estado de Auditoría</p>
-              <span class="px-6 py-2 bg-green-900 text-white text-xs font-black rounded-full uppercase tracking-widest">
-                CONCILIADA
+              <span class="px-6 py-2 bg-green-900 text-white text-[10px] font-black rounded-full uppercase tracking-[0.2em]">
+                {{ conciliacion.orden?.estado?.split('_').pop() || 'CONCILIADA' }}
               </span>
             </div>
           </div>
@@ -32,15 +36,15 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
             <div class="p-8 bg-gray-50 rounded-[2rem] border border-gray-100">
               <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Peso Inicial (Balanza)</p>
-              <p class="text-4xl font-bold text-gray-900">{{ conciliacion.peso_inicial }} <span class="text-lg font-medium text-gray-400">kg</span></p>
+              <p class="text-4xl font-bold text-gray-900 tabular-nums">{{ conciliacion.pesoInicial }} <span class="text-lg font-medium text-gray-400">kg</span></p>
             </div>
             <div class="p-8 bg-gray-50 rounded-[2rem] border border-gray-100">
               <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Peso Final (Balanza)</p>
-              <p class="text-4xl font-bold text-gray-900">{{ conciliacion.peso_final }} <span class="text-lg font-medium text-gray-400">kg</span></p>
+              <p class="text-4xl font-bold text-gray-900 tabular-nums">{{ conciliacion.pesoFinal }} <span class="text-lg font-medium text-gray-400">kg</span></p>
             </div>
-            <div class="p-8 bg-gray-900 rounded-[2rem] shadow-xl shadow-blue-900/10">
+            <div class="p-8 bg-gray-900 rounded-[2rem] shadow-2xl shadow-blue-900/20">
               <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Neto por Balanza</p>
-              <p class="text-4xl font-bold text-white">{{ conciliacion.neto_por_balanza }} <span class="text-lg font-medium text-blue-400">kg</span></p>
+              <p class="text-4xl font-bold text-white tabular-nums">{{ conciliacion.netoCargado }} <span class="text-lg font-medium text-blue-400">kg</span></p>
             </div>
           </div>
         </div>
@@ -48,45 +52,48 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm">
-            <h3 class="text-xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">Promedios de Carga</h3>
+            <h3 class="text-xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4 flex items-center gap-2">
+              <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Promedios de Carga
+            </h3>
             <div class="space-y-6">
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Caudal</span>
-                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedio_caudal }} m³/h</span>
+              <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Caudal</span>
+                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedioCaudal || '0' }} m³/h</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Densidad</span>
-                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedio_densidad }} kg/m³</span>
+              <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Densidad</span>
+                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedioDensidad || '0' }} kg/m³</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Temperatura</span>
-                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedio_temperatura }} °C</span>
+              <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Temperatura</span>
+                <span class="text-lg font-bold text-gray-900">{{ conciliacion.promedioTemperatura || '0' }} °C</span>
               </div>
             </div>
           </div>
 
-          <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm flex flex-col justify-center">
+          <div class="bg-white p-10 rounded-[3rem] border border-gray-200 shadow-sm flex flex-col justify-between">
             <div class="mb-8">
               <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Producto Registrado</p>
-              <p class="text-3xl font-bold text-gray-900">{{ conciliacion.producto_cargado || 'N/A' }}</p>
+              <p class="text-4xl font-bold text-gray-900 tracking-tighter">
+                {{ conciliacion.orden?.producto?.producto || 'Sin especificar' }}
+              </p>
             </div>
-            <div class="p-6 bg-red-50 rounded-2xl border border-red-100">
-              <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1">Diferencia Balanza vs Caudalímetro</p>
-              <p class="text-2xl font-bold text-red-600">{{ conciliacion.diferencia_balanza_caudalimetro }} kg</p>
-              <p class="text-[10px] text-red-400 mt-2 font-medium italic">* Margen de error calculado por el sistema</p>
+
+            <div class="p-6 bg-red-50 rounded-3xl border border-red-100 relative overflow-hidden">
+              <div class="absolute -right-4 -bottom-4 text-red-100 text-6xl font-black opacity-50">!</div>
+              <p class="text-[10px] font-black text-red-400 uppercase tracking-widest mb-1 relative z-10">Diferencia Balanza vs Caudalímetro</p>
+              <p class="text-3xl font-bold text-red-600 relative z-10">{{ conciliacion.diferenciaCaudalimetro || '0' }} kg</p>
+              <p class="text-[10px] text-red-400 mt-2 font-medium italic relative z-10">* Desviación calculada por sistema</p>
             </div>
           </div>
 
-        </div>
-
-        <div class="text-center py-10">
-          <p class="text-xs font-bold text-gray-300 uppercase tracking-[0.3em]">ID Interno de Auditoría: {{ conciliacion.id }}</p>
         </div>
 
       </div>
 
       <div v-else class="text-center py-20 bg-white rounded-[3rem] border border-dashed border-gray-200">
-        <p class="text-gray-400 font-bold uppercase tracking-widest">No se encontró la conciliación solicitada.</p>
+        <p class="text-gray-400 font-bold uppercase tracking-widest">No se encontró la conciliación para esta orden.</p>
       </div>
 
     </div>
@@ -102,13 +109,14 @@ const route = useRoute()
 const conciliacion = ref(null)
 const loading = ref(true)
 
-onMounted(async () => {
+async function fetchDetalleConciliacion() {
   try {
+    loading.value = true
     const token = localStorage.getItem('token')
-    const id = route.params.numeroOrden
-    
+    const numeroOrden = route.params.id // Este es el número que viene de la URL
 
-    const res = await axios.get(`http://localhost:8080/api/v1/conciliacion/${id}`, {
+    // Ajustamos el endpoint para buscar por numero de orden
+    const res = await axios.get(`http://localhost:8080/api/v1/conciliacion/orden/${numeroOrden}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     
@@ -118,9 +126,15 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(() => {
+  fetchDetalleConciliacion()
 })
 </script>
 
 <style scoped>
 .font-inter-tight { font-family: 'Inter Tight', sans-serif; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.8s ease-out; }
 </style>
