@@ -42,7 +42,7 @@
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fecha Recepción</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaRecepcion }}</p>
+              <p class="text-gray-800 font-medium">{{ orden.fechaRecepcionOrden }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fecha Estimada</p>
@@ -64,15 +64,16 @@
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Inicio Carga</p>
-              <p class="text-gray-800 font-medium">{{ orden.inicioCarga || '--:--' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden.fechaInicioCarga || '--:--' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fin Carga</p>
-              <p class="text-gray-800 font-medium">{{ orden.finCarga || '--:--' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden.fechaFinCarga || '--:--' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Pesaje Final</p>
               <p class="text-gray-800 font-medium">{{ orden.fechaPesajeFinal || 'Pendiente' }}</p>
+              <p class="text-sm font-bold text-gray-900 mt-2">Peso Inicial: {{ orden.pesoFinal || '0' }} kg</p>
             </div>
           </div>
         </div>
@@ -244,23 +245,42 @@ const etaDisplay = computed(() => {
 });
 
 function updateTiempoTranscurrido() {
-  if (orden.value.estado === 'CARGANDO' || orden.value.estado === 2 || (typeof orden.value.estado === 'string' && orden.value.estado.includes('2'))) {
-    if (!orden.value.inicioCarga) {
-      tiempoTranscurridoDisplay.value = '00:00:00';
-      return;
-    }
+  const estado = orden.value?.estado
 
-    const inicio = new Date(orden.value.inicioCarga).getTime();
-    const ahora = new Date().getTime();
-    const diff = Math.max(0, Math.floor((ahora - inicio) / 1000));
+  const estaCargando =
+    estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' || estado === 2
 
-    const h = Math.floor(diff / 3600);
-    const m = Math.floor((diff % 3600) / 60);
-    const s = diff % 60;
-    tiempoTranscurridoDisplay.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  } else {
-    tiempoTranscurridoDisplay.value = '--:--:--';
+  if (!estaCargando) {
+    tiempoTranscurridoDisplay.value = '--:--:--'
+    return
   }
+
+  const fechaInicio = orden.value?.fechaInicioCarga
+
+  if (!fechaInicio) {
+    tiempoTranscurridoDisplay.value = '00:00:00'
+    return
+  }
+
+  const fechaNormalizada = fechaInicio.replace(' ', 'T')
+  const inicio = new Date(fechaNormalizada)
+
+  if (isNaN(inicio.getTime())) {
+    tiempoTranscurridoDisplay.value = '00:00:00'
+    return
+  }
+
+  const ahora = new Date()
+  const diffSegundos = Math.floor((ahora - inicio) / 1000)
+
+  const horas = Math.floor(diffSegundos / 3600)
+  const minutos = Math.floor((diffSegundos % 3600) / 60)
+  const segundos = diffSegundos % 60
+
+  tiempoTranscurridoDisplay.value =
+    `${horas.toString().padStart(2, '0')}:` +
+    `${minutos.toString().padStart(2, '0')}:` +
+    `${segundos.toString().padStart(2, '0')}`
 }
 
 async function fetchOrden() {
@@ -372,6 +392,7 @@ onMounted(async () => {
       if (data.masaAcumulada !== undefined) {
         masaActual.value = data.masaAcumulada;
       }
+
       if (data.orden) {
         orden.value = data.orden;
         if (data.orden.ultimaMasaAcumulada) {
