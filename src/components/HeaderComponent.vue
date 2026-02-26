@@ -1,13 +1,13 @@
 <template>
   <header class="bg-gray-900/95 backdrop-blur-xl sticky top-0 z-50 border-b border-white/5">
     <nav aria-label="Global" class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-      
+
       <div class="hidden lg:flex lg:gap-x-10 items-center">
-        <a href="/" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/ui/" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Inicio
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
-        
+
         <div class="relative">
           <button popovertarget="desktop-menu-product"
             class="group flex items-center gap-x-1.5 text-sm font-bold tracking-widest text-gray-400 hover:text-white transition-all duration-300">
@@ -21,7 +21,7 @@
           <el-popover id="desktop-menu-product" anchor="bottom" popover
             class="w-screen max-w-md overflow-hidden rounded-[2rem] bg-black/90 border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-2xl p-4 mt-4">
             <div class="p-4 space-y-2">
-              
+
               <div class="group relative flex items-center gap-x-6 rounded-2xl p-4 hover:bg-white/[0.03] transition-all duration-300">
                 <div class="flex size-11 flex-none items-center justify-center rounded-xl bg-gray-800 border border-white/5 group-hover:border-blue-500/50 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6 text-gray-400 group-hover:text-blue-400">
@@ -30,7 +30,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Clientes<span class="absolute inset-0"></span></a>
+                  <a href="/ui/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Clientes<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Registrados en las ordenes</p>
                 </div>
               </div>
@@ -42,7 +42,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/productos" class="block font-bold text-white tracking-tighter text-xs uppercase">Productos<span class="absolute inset-0"></span></a>
+                  <a href="/ui/productos" class="block font-bold text-white tracking-tighter text-xs uppercase">Productos<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Catálogo de carga</p>
                 </div>
               </div>
@@ -54,7 +54,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/camiones" class="block font-bold text-white tracking-tighter text-xs uppercase">Camiones<span class="absolute inset-0"></span></a>
+                  <a href="/ui/camiones" class="block font-bold text-white tracking-tighter text-xs uppercase">Camiones<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Unidades de transporte</p>
                 </div>
               </div>
@@ -66,7 +66,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/choferes" class="block font-bold text-white tracking-tighter text-xs uppercase">Choferes<span class="absolute inset-0"></span></a>
+                  <a href="/ui/choferes" class="block font-bold text-white tracking-tighter text-xs uppercase">Choferes<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Personal habilitado</p>
                 </div>
               </div>
@@ -75,12 +75,12 @@
           </el-popover>
         </div>
 
-        <a href="/conciliaciones" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/ui/conciliaciones" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Conciliaciones
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
 
-        <a href="/home" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/ui/home" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Ordenes
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
@@ -92,14 +92,14 @@
       </div>
 
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-        
-        <a v-if="!isLoggedIn" href="/login" 
+
+        <a v-if="!isLoggedIn" href="/ui/login"
            class="group relative py-2 text-xs font-black uppercase tracking-[0.2em] text-blue-400 hover:text-white transition-all duration-300">
           SISTEMA LOGIN
           <span class="absolute bottom-0 left-0 w-full h-[2px] bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)] scale-x-50 group-hover:scale-x-100 transition-transform duration-500"></span>
         </a>
 
-        <button v-else @click="handleLogout" 
+        <button v-else @click="handleLogout"
            class="group relative py-2 text-xs font-black uppercase tracking-[0.2em] text-red-500 hover:text-white transition-all duration-300">
           DESCONECTAR
           <span class="absolute bottom-0 left-0 w-full h-[2px] bg-red-600 shadow-[0_0_12px_rgba(220,38,38,0.8)] scale-x-50 group-hover:scale-x-100 transition-transform duration-500"></span>
@@ -136,7 +136,7 @@ watch(() => route.path, () => {
 
 const handleLogout = () => {
   localStorage.removeItem('token')
-  checkLoginStatus() 
+  checkLoginStatus()
   router.push('/login')
 }
 </script>
