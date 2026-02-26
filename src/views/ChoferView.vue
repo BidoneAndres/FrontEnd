@@ -41,7 +41,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Loading -->
+
       <div v-if="loading" class="mt-12 space-y-4">
         <div
           v-for="i in 3"
@@ -50,7 +50,7 @@ onMounted(() => {
         ></div>
       </div>
 
-      <!-- Lista -->
+
       <div v-else class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
           v-for="c in chofer"

@@ -188,51 +188,64 @@
           </div>
         </div>
       </div>
-      <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-        <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
-          <span class="w-1 h-5 bg-red-500 rounded-full"></span>
-          Alarmas Activas
-          <span v-if="alarmas?.length"
-            class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-black rounded-full uppercase animate-pulse">
-            {{ alarmas.length }}
-          </span>
-        </h3>
 
-        <!-- Sin alarmas -->
-        <div v-if="!alarmas || alarmas.length === 0"
-          class="bg-green-50 border border-green-200 text-green-700 p-6 rounded-xl text-center font-semibold">
-          ✅ No hay alarmas activas
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+            <span class="w-1 h-5 bg-red-500 rounded-full"></span>
+            Alarmas Activas
+            <span v-if="alarmas?.length"
+              class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-black rounded-full uppercase animate-pulse">
+              {{ alarmas.length }}
+            </span>
+          </h3>
+          <div v-if="!alarmas || alarmas.length === 0"
+            class="bg-green-50 border border-green-200 text-green-700 p-6 rounded-xl text-center font-semibold">
+            No hay alarmas activas
+          </div>
+          <div v-else class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+            <div v-for="alarma in alarmas" :key="alarma.id"
+              class="flex items-center justify-between p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition-colors">
+              <div>
+                <p class="text-xs uppercase text-red-600 font-black tracking-widest mb-1">Alarma #{{ alarma.id }}</p>
+                <p class="text-lg font-bold text-red-900">{{ alarma.estado.replaceAll('_', ' ') }}</p>
+                <p class="text-xs text-gray-600 mt-1">{{ formatFecha(alarma.tiempo) }}</p>
+              </div>
+              <div class="text-right space-y-2">
+                <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full uppercase animate-pulse">Pendiente</span>
+                <button @click="aceptarAlarma(alarma.id)" class="block w-full my-2 px-4 py-2 text-green-600 hover:text-green-700 text-xs font-bold rounded-lg transition">ACEPTAR</button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Lista de alarmas -->
-        <div v-else class="space-y-4">
-          <div v-for="alarma in alarmas" :key="alarma.id"
-            class="flex items-center justify-between p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition-colors">
-
-            <div>
-              <p class="text-xs uppercase text-red-600 font-black tracking-widest mb-1">
-                Alarma #{{ alarma.id }}
-              </p>
-              <p class="text-lg font-bold text-red-900">
-                {{ alarma.estado.replaceAll('_', ' ') }}
-              </p>
-              <p class="text-xs text-gray-600 mt-1">
-                ⏱ {{ formatFecha(alarma.tiempo) }}
-              </p>
+        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+            <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
+            Últimas Cargas
+          </h3>
+          <div v-if="!historialCargas || historialCargas.length === 0"
+            class="bg-gray-50 border border-gray-200 text-gray-500 p-6 rounded-xl text-center font-semibold">
+            Sin datos de carga recientes
+          </div>
+          <div v-else class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            <div v-for="(carga, index) in historialCargas" :key="index"
+              class="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white transition-all">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">{{ carga.timestamp?.split(' ')[1] || '00:00:00' }}</span>
+                <span class="text-sm font-bold text-gray-900">{{ carga.masaAcumulada }} kg</span>
+              </div>
+              <div class="text-right grid grid-cols-2 gap-x-4">
+                <div>
+                  <p class="text-[8px] uppercase text-gray-400 font-bold">Temp</p>
+                  <p class="text-xs font-black text-red-600">{{ carga.temperatura }}°</p>
+                </div>
+                <div>
+                  <p class="text-[8px] uppercase text-gray-400 font-bold">Caudal</p>
+                  <p class="text-xs font-black text-blue-600">{{ carga.caudal }}</p>
+                </div>
+              </div>
             </div>
-
-            <div class="text-right space-y-2">
-              <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full uppercase animate-pulse">
-                Pendiente
-              </span>
-
-              <!-- BOTÓN NUEVO -->
-              <button @click="aceptarAlarma(alarma.id)"
-                class="block w-full my-2 px-4 py-2 text-green-600 hover:text-green-700 text-xs font-bold rounded-lg transition">
-                ACEPTAR
-              </button>
-            </div>
-
           </div>
         </div>
       </div>
@@ -250,6 +263,7 @@ import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 
 const orden = ref({})
 const alarmas = ref([])
+const historialCargas = ref([])
 const temperatura = ref(0)
 const caudal = ref(0)
 const densidad = ref(0)
@@ -295,41 +309,28 @@ const etaDisplay = computed(() => {
 
 function updateTiempoTranscurrido() {
   const estado = orden.value?.estado
-
-  const estaCargando =
-    estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' || estado === 2
-
+  const estaCargando = estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' || estado === 2
   if (!estaCargando) {
     tiempoTranscurridoDisplay.value = '--:--:--'
     return
   }
-
   const fechaInicio = orden.value?.fechaInicioCarga
-
   if (!fechaInicio) {
     tiempoTranscurridoDisplay.value = '00:00:00'
     return
   }
-
   const fechaNormalizada = fechaInicio.replace(' ', 'T')
   const inicio = new Date(fechaNormalizada)
-
   if (isNaN(inicio.getTime())) {
     tiempoTranscurridoDisplay.value = '00:00:00'
     return
   }
-
   const ahora = new Date()
   const diffSegundos = Math.floor((ahora - inicio) / 1000)
-
   const horas = Math.floor(diffSegundos / 3600)
   const minutos = Math.floor((diffSegundos % 3600) / 60)
   const segundos = diffSegundos % 60
-
-  tiempoTranscurridoDisplay.value =
-    `${horas.toString().padStart(2, '0')}:` +
-    `${minutos.toString().padStart(2, '0')}:` +
-    `${segundos.toString().padStart(2, '0')}`
+  tiempoTranscurridoDisplay.value = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`
 }
 
 async function fetchOrden() {
@@ -354,39 +355,21 @@ async function fetchOrden() {
 
 async function aceptarAlarma(idAlarma) {
   try {
-
     const token = localStorage.getItem('token')
-    await axios.post(
-      "https://cernikiw3.chickenkiller.com/api/v1/orden/set-estado-alarma?estado=ACEPTADA",
-      {
-        id: idAlarma
-      },
-      {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }
-    )
-
-    alert("Alarma aceptada ✅")
-
-  }
-  catch (err) {
+    await axios.post("https://cernikiw3.chickenkiller.com/api/v1/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma }, { headers: { 'Authorization': `Bearer ${token}` } })
+    alert("Alarma aceptada ")
+    await fetchAlarmas(orden.value.id)
+  } catch (err) {
     console.error('Error tocando el boton:', err)
   }
-
 }
-//alarmas
+
 async function fetchAlarmas(idOrden) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, { headers: { 'Authorization': `Bearer ${token}` } })
     alarmas.value = res.data.alarmas
-
-
-    console.log(res);
-
   } catch (err) {
     console.error('Error cargando alarma:', err)
   }
@@ -395,18 +378,15 @@ async function fetchAlarmas(idOrden) {
 async function fetchHistorial(nroOrden) {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, { headers: { 'Authorization': `Bearer ${token}` } })
     const historial = res.data
     if (historial && historial.length > 0) {
+      historialCargas.value = [...historial].reverse().slice(0, 20)
       const ultimo = historial[historial.length - 1]
       temperatura.value = ultimo.temperatura || 0
       caudal.value = ultimo.caudal || 0
       densidad.value = ultimo.densidadProducto || 0
-      if (ultimo.masaAcumulada) {
-        masaActual.value = ultimo.masaAcumulada;
-      }
+      if (ultimo.masaAcumulada) { masaActual.value = ultimo.masaAcumulada; }
       const labels = historial.map(d => d.timestamp ? d.timestamp.split(' ')[1] : 'S/T')
       if (chartInstance) {
         chartInstance.data.labels = labels
@@ -424,9 +404,7 @@ async function fetchHistorial(nroOrden) {
   }
 }
 
-function toggleDetalle() {
-  showDetalle.value = !showDetalle.value
-}
+function toggleDetalle() { showDetalle.value = !showDetalle.value }
 
 onMounted(async () => {
   try {
@@ -434,67 +412,33 @@ onMounted(async () => {
     if (!token) return
     await nextTick()
     const commonOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: {
-        y: { grid: { color: '#f3f4f6' }, beginAtZero: false },
-        x: { grid: { display: false } }
-      }
+      scales: { y: { grid: { color: '#f3f4f6' }, beginAtZero: false }, x: { grid: { display: false } } }
     }
     chartInstance = new Chart(chartCanvas.value, {
       type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Temp',
-          data: [],
-          borderColor: 'rgb(239, 68, 68)',
-          backgroundColor: 'rgba(239, 68, 68, 0.05)',
-          tension: 0.4,
-          fill: true,
-          pointRadius: 0
-        }]
-      },
+      data: { labels: [], datasets: [{ label: 'Temp', data: [], borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
     chartCaudalInstance = new Chart(chartCaudalCanvas.value, {
       type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Caudal',
-          data: [],
-          borderColor: 'rgb(37, 99, 235)',
-          backgroundColor: 'rgba(37, 99, 235, 0.05)',
-          tension: 0.4,
-          fill: true,
-          pointRadius: 0
-        }]
-      },
+      data: { labels: [], datasets: [{ label: 'Caudal', data: [], borderColor: 'rgb(37, 99, 235)', backgroundColor: 'rgba(37, 99, 235, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
-
     await fetchOrden()
     timerInterval = setInterval(updateTiempoTranscurrido, 1000);
-
-    connectSocket(
-      numeroOrden,
-      token,
-      //callback 1 para datos
+    connectSocket(numeroOrden, token,
       (data) => {
-        console.log('weoeeo');
-
-        console.log(data);
-
-        if (data.masaAcumulada !== undefined) {
+        if (data.masaAcumulada !== undefined) { 
           masaActual.value = data.masaAcumulada;
+          const ahoraString = new Date().toISOString().replace('T', ' ').split('.')[0];
+          historialCargas.value.unshift({ ...data, timestamp: ahoraString });
+          if (historialCargas.value.length > 20) historialCargas.value.pop();
         }
         if (data.orden) {
           orden.value = data.orden;
-          if (data.orden.ultimaMasaAcumulada) {
-            masaActual.value = data.orden.ultimaMasaAcumulada;
-          }
+          if (data.orden.ultimaMasaAcumulada) { masaActual.value = data.orden.ultimaMasaAcumulada; }
         }
         if (data.temperatura !== undefined) temperatura.value = data.temperatura
         if (data.caudal !== undefined) caudal.value = data.caudal
@@ -503,37 +447,21 @@ onMounted(async () => {
         if (chartInstance && data.temperatura !== undefined) {
           chartInstance.data.labels.push(ahora)
           chartInstance.data.datasets[0].data.push(data.temperatura)
-          if (chartInstance.data.labels.length > 30) {
-            chartInstance.data.labels.shift()
-            chartInstance.data.datasets[0].data.shift()
-          }
+          if (chartInstance.data.labels.length > 30) { chartInstance.data.labels.shift(); chartInstance.data.datasets[0].data.shift(); }
           chartInstance.update('none')
         }
         if (chartCaudalInstance && data.caudal !== undefined) {
           chartCaudalInstance.data.labels.push(ahora)
           chartCaudalInstance.data.datasets[0].data.push(data.caudal)
-          if (chartCaudalInstance.data.labels.length > 30) {
-            chartCaudalInstance.data.labels.shift()
-            chartCaudalInstance.data.datasets[0].data.shift()
-          }
+          if (chartCaudalInstance.data.labels.length > 30) { chartCaudalInstance.data.labels.shift(); chartCaudalInstance.data.datasets[0].data.shift(); }
           chartCaudalInstance.update('none')
         }
       },
-      //callback 2 para alarmas
       (dataAlarma) => {
-        console.log(dataAlarma);
-        const nuevaAlarma = {
-          id: dataAlarma.id,
-          estado: dataAlarma.estado,
-          tiempo: dataAlarma.fechaCreacion // Mapeamos el nombre aquí
-        };
+        const nuevaAlarma = { id: dataAlarma.id, estado: dataAlarma.estado, tiempo: dataAlarma.fechaCreacion };
         alarmas.value.unshift(nuevaAlarma);
-
-
       })
-  } catch (err) {
-    console.error("Error en monitor:", err)
-  }
+  } catch (err) { console.error("Error en monitor:", err) }
 })
 
 onBeforeUnmount(() => {

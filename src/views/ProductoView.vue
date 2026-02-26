@@ -57,7 +57,7 @@ onMounted(() => {
 });
 
 function goToEdit(id) {
-  // Aquí podrías navegar al detalle o edición si fuera necesario
+
   console.log("Navegando al producto ID:", id);
 }
 </script>

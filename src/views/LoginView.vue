@@ -56,34 +56,34 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-// 1. Creamos las variables reactivas para los campos del formulario
+
 const email = ref('');
 const password = ref('');
-const errorMsg = ref(''); // Para mostrar si algo sale mal
+const errorMsg = ref(''); 
 const router = useRouter();
 
-// 2. La función que se ejecuta al darle click al botón
+
 const handleLogin = async () => {
   try {
-    errorMsg.value = ''; // Limpiamos errores previos
+    errorMsg.value = ''; 
 
-    // Tu backend espera un JSON con "username" y "password"
+
     const response = await axios.post('https://cernikiw3.chickenkiller.com/api/v1/login/json', {
-      username: email.value, // Usamos el email como username
+      username: email.value, 
       password: password.value
     }, {
-      responseType: 'text' // Importante: tu Spring devuelve el token como texto plano
+      responseType: 'text' 
     });
 
     const token = response.data;
 
     if (token) {
-      // 3. Guardamos el token en el almacenamiento del navegador
+
       localStorage.setItem('token', token);
 
       console.log('¡Login exitoso!');
       console.log(token)
-      // 4. Redirigimos al usuario a la página principal (Home/Dashboard)
+
       router.push('/home');
     }
   } catch (error) {

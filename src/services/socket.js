@@ -20,7 +20,6 @@ export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) 
         '/topic/orden',
         `/topic/carga/${numeroOrden}`,
 
-        //`/topic/carga${numeroOrden}`
       ]
 
       topics.forEach((topic) => {
@@ -36,7 +35,7 @@ export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) 
             console.log('   - caudal:', data.caudal)
             console.log('   - densidad:', data.densidad)
             console.log('   - pesoInicial:', data.pesoInicial)
-            // Ejecutamos el callback original
+    
           if (callbackDatos) callbackDatos(data)
           })
           console.log('Suscrito a', topic)
@@ -51,7 +50,6 @@ export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) 
           const dataAlarma = JSON.parse(message.body)
           console.log(`🚨 ALARMA recibida en ${topicAlarmas}:`, dataAlarma)
 
-          // Ejecutamos el nuevo callback específico para alarmas
           if (callbackAlarma) callbackAlarma(dataAlarma)
         })
         console.log('Suscrito a', topicAlarmas)
