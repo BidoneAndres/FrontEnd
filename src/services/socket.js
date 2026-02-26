@@ -15,9 +15,9 @@ export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) 
     onConnect: () => {
       console.log("WS conectado para orden:", numeroOrden)
 
-      // Suscribirse a varios topics para compatibilidad con backend
       const topics = [
         `/topic/monitor/${numeroOrden}`,
+        '/topic/orden',
         `/topic/carga/${numeroOrden}`,
 
         //`/topic/carga${numeroOrden}`
@@ -28,7 +28,6 @@ export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) 
           stompClient.subscribe(topic, (message) => {
             const data = JSON.parse(message.body)
             console.log(`WebSocket recibido en ${topic} - Data:`, JSON.stringify(data, null, 2))
-            // logs resumidos
             console.log('   - numeroOrden:', data.numeroOrden)
             console.log('   - estado:', data.estado)
             console.log('   - inicioCarga:', data.inicioCarga)

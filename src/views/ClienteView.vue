@@ -7,20 +7,19 @@ const router = useRouter()
 const clientes = ref([]);
 const loading = ref(true);
 
-// Modal y Formulario de Registro
 const showModal = ref(false);
 const isSaving = ref(false);
 const nuevoCliente = ref({
   username: '',
   password: '',
   email: '',
-  role: 'admin' // Valor por defecto según tu ejemplo
+  role: 'admin' 
 });
 
 async function fetchClientes() {
   try {
     const token = localStorage.getItem('token')
-    // Asumiendo que existe un endpoint para listar, si no, se puede ajustar
+  
     const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/cliente', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -37,12 +36,11 @@ async function registrarCliente() {
     isSaving.value = true;
     const token = localStorage.getItem('token');
 
-    // Mantenemos el formato exacto que usaste en Postman
     const payload = {
       username: nuevoCliente.value.username,
       password: nuevoCliente.value.password,
       email: nuevoCliente.value.email,
-      role: nuevoCliente.value.role // "admin" tal cual está en tu imagen
+      role: nuevoCliente.value.role 
     };
 
     console.log("Enviando a registrar:", payload);
@@ -50,7 +48,7 @@ async function registrarCliente() {
     const res = await axios.post('https://cernikiw3.chickenkiller.com/api/v1/register', payload, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json' // Lo forzamos por si acaso
+        'Content-Type': 'application/json' 
       }
     });
 
@@ -59,7 +57,7 @@ async function registrarCliente() {
     await fetchClientes();
 
   } catch (error) {
-    // ESTO ES CLAVE: Mira la consola (F12) para ver qué dice el servidor
+
     if (error.response) {
       console.error("Detalles del error 500:", error.response.data);
       alert(`Error del servidor: ${error.response.data.message || 'Error Interno'}`);
@@ -121,11 +119,6 @@ function goToEdit(id) {
               {{ c.username }}
             </h2>
             <p class="text-gray-400 font-medium mt-1">{{ c.email }}</p>
-          </div>
-
-          <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between text-gray-400 group-hover:text-gray-900 transition-colors">
-            <span class="text-xs font-bold uppercase tracking-widest">Configurar perfil</span>
-            <span class="transform group-hover:translate-x-2 transition-transform text-2xl">→</span>
           </div>
         </div>
       </div>

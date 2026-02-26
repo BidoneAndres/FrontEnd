@@ -84,16 +84,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted,onBeforeUnmount, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { connectSocket, disconnectSocket } from '@/services/socket'
 
 const ordenes = ref([])
 const loading = ref(true)
 const filtroActual = ref('TODOS')
 const router = useRouter()
 
-// Configuración exacta con tus estados
+
 const estadosConfig = [
   { id: 'TODOS', shortLabel: 'Todas' },
   { id: 'ESTADO_1_PENDIENTE_PESAJE_INICIAL', shortLabel: 'Pesaje Inicial' },
@@ -108,17 +109,22 @@ const ordenesFiltradas = computed(() => {
   return ordenes.value.filter(o => o.estado === filtroActual.value)
 })
 
-// Formatea el texto largo para que se vea lindo en la card
+
 function formatEstadoTexto(estado: string) {
-  // Quita el "ESTADO_X_" del principio para mostrar solo la descripción
+
   return estado.split('_').slice(2).join(' ')
 }
 
-function getColorEstado(estado: string) {
+function getColorEstado(estado) {
+
+  if (!estado) return 'bg-gray-200'
+  
+
   if (estado.includes('ESTADO_1')) return 'bg-gray-400'
   if (estado.includes('ESTADO_2')) return 'bg-orange-500'
   if (estado.includes('ESTADO_3')) return 'bg-blue-600'
   if (estado.includes('ESTADO_4')) return 'bg-green-500'
+  
   return 'bg-gray-200'
 }
 
@@ -140,7 +146,27 @@ function irAlMonitor(id: number) {
   router.push(`/monitor/${id}`)
 }
 
-onMounted(fetchOrdenes)
+onMounted(async () => {
+
+  await fetchOrdenes()
+
+
+  const token = localStorage.getItem('token')
+  if (token) {
+
+  connectSocket('orden', token, (data) => {
+
+    console.log("¡Alarma de nueva orden recibida! Recargando lista...");
+    
+  
+    fetchOrdenes(); 
+  });
+  }
+})
+
+onBeforeUnmount(() => {
+  disconnectSocket()
+})
 </script>
 
 <style scoped>
