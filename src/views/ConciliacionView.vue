@@ -32,12 +32,10 @@ function formatted(rawDate) {
   })
 }
 
-function goToDetail(id) {
-  router.push({ name: 'conciliacion-detail', params: { id } })
+function goToDetail(numeroOrden) {
+  console.log("Valor que estoy enviando al detail:", numeroOrden)
+  router.push({ name: 'conciliacion-detail', params: { id: numeroOrden } })
 }
-
-// Función de seguridad para mostrar el número
-// Intenta sacar el número de la orden, y si no existe, usa el ID de la conciliación
 function getOrderNumber(c) {
   return c.orden?.numeroOrden || c.orden?.id || c.id || 'S/N';
 }
@@ -57,7 +55,7 @@ function getOrderNumber(c) {
 
       <div v-else class="mt-12 space-y-8">
 
-        <div v-for="c in conciliaciones" :key="c.id" @click="goToDetail(c.id)"
+        <div v-for="c in conciliaciones" :key="c.id" @click="goToDetail(c.orden?.id)"
           class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-200 hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer">
 
           <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
