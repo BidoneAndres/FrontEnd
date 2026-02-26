@@ -30,7 +30,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Clientes<span class="absolute inset-0"></span></a>
+                  <a href="/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Usuarios<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Registrados en las ordenes</p>
                 </div>
               </div>
