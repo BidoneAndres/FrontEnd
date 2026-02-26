@@ -3,7 +3,7 @@ import { Client } from '@stomp/stompjs'
 
 let stompClient = null
 
-export function connectSocket(numeroOrden, token, callback) {
+export function connectSocket(numeroOrden, token, callbackDatos,callbackAlarma) {
 
   const socket = new SockJS('https://cernikiw3.chickenkiller.com/temperaturas')
 
@@ -19,7 +19,8 @@ export function connectSocket(numeroOrden, token, callback) {
       const topics = [
         `/topic/monitor/${numeroOrden}`,
         `/topic/carga/${numeroOrden}`,
-        `/topic/carga${numeroOrden}`
+
+        //`/topic/carga${numeroOrden}`
       ]
 
       topics.forEach((topic) => {
@@ -36,13 +37,29 @@ export function connectSocket(numeroOrden, token, callback) {
             console.log('   - caudal:', data.caudal)
             console.log('   - densidad:', data.densidad)
             console.log('   - pesoInicial:', data.pesoInicial)
-            callback(data)
+            // Ejecutamos el callback original
+          if (callbackDatos) callbackDatos(data)
           })
           console.log('Suscrito a', topic)
         } catch (e) {
           console.warn('No se pudo suscribir a', topic, e)
         }
       })
+
+      const topicAlarmas = `/topic/alarmas/Orden/${numeroOrden}`;
+      try {
+        stompClient.subscribe(topicAlarmas, (message) => {
+          const dataAlarma = JSON.parse(message.body)
+          console.log(`🚨 ALARMA recibida en ${topicAlarmas}:`, dataAlarma)
+
+          // Ejecutamos el nuevo callback específico para alarmas
+          if (callbackAlarma) callbackAlarma(dataAlarma)
+        })
+        console.log('Suscrito a', topicAlarmas)
+      } catch (e) {
+        console.warn('No se pudo suscribir a', topicAlarmas, e)
+      }
+
     },
     onStompError: (frame) => {
       console.error(" STOMP error:", frame)

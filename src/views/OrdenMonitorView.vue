@@ -2,10 +2,7 @@
   <section class="py-20 bg-gray-50 min-h-screen font-inter">
     <div class="max-w-6xl mx-auto px-6 space-y-10">
 
-      <div
-        class="cursor-pointer select-none group"
-        @click="toggleDetalle"
-      >
+      <div class="cursor-pointer select-none group" @click="toggleDetalle">
         <h1 class="text-4xl font-bold flex items-center gap-3 text-gray-900">
           Monitor de Orden #{{ orden.numeroOrden || '...' }}
           <span class="text-gray-400 text-2xl group-hover:text-blue-500 transition-colors">
@@ -14,10 +11,8 @@
         </h1>
       </div>
 
-      <div
-        v-if="showDetalle"
-        class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mt-6 space-y-8 animate-in fade-in slide-in-from-top-4 duration-300"
-      >
+      <div v-if="showDetalle"
+        class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mt-6 space-y-8 animate-in fade-in slide-in-from-top-4 duration-300">
         <div>
           <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <span class="w-1 h-5 bg-blue-500 rounded-full"></span>
@@ -79,36 +74,38 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          :class="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
-          class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center transition-all duration-500"
-        >
+        <div :class="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
+          class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center transition-all duration-500">
           <h2 class="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">Estado Actual</h2>
           <p class="text-4xl font-black italic tracking-tighter">{{ orden.estado || 'ESPERANDO...' }}</p>
         </div>
 
-        <div v-if="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA'" class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center">
+        <div v-if="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA'"
+          class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center">
           <h2 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Tiempo de Carga</h2>
           <p class="text-4xl font-black text-gray-900 tabular-nums">{{ tiempoTranscurridoDisplay }}</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-red-500 text-center group hover:bg-red-50 transition-colors">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-red-500 text-center group hover:bg-red-50 transition-colors">
           <p class="text-6xl font-black text-red-900 tracking-tighter group-hover:scale-110 transition-transform">
             {{ temperatura }}<span class="text-2xl ml-1">°C</span>
           </p>
           <p class="text-xs font-bold text-red-700 mt-4 uppercase tracking-[0.2em]">Temperatura</p>
         </div>
 
-        <div class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-blue-500 text-center group hover:bg-blue-50 transition-colors">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-blue-500 text-center group hover:bg-blue-50 transition-colors">
           <p class="text-6xl font-black text-blue-900 tracking-tighter group-hover:scale-110 transition-transform">
             {{ caudal }}
           </p>
           <p class="text-xs font-bold text-blue-700 mt-4 uppercase tracking-[0.2em]">Caudal Actual (kg/h)</p>
         </div>
 
-        <div class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-green-500 text-center group hover:bg-green-50 transition-colors">
+        <div
+          class="bg-white p-8 rounded-2xl shadow-md border-b-4 border-green-500 text-center group hover:bg-green-50 transition-colors">
           <p class="text-6xl font-black text-green-900 tracking-tighter group-hover:scale-110 transition-transform">
             {{ densidad }}
           </p>
@@ -132,7 +129,8 @@
               {{ etaDisplay }}
             </p>
 
-            <p v-else-if="orden.preset && masaActual > orden.preset" class="text-3xl font-black text-red-600 animate-pulse tabular-nums">
+            <p v-else-if="orden.preset && masaActual > orden.preset"
+              class="text-3xl font-black text-red-600 animate-pulse tabular-nums">
               ¡ATENCION!
             </p>
 
@@ -153,9 +151,9 @@
         <div class="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
           <div
             class="absolute top-0 left-0 h-full bg-blue-600 rounded-full transition-all duration-700 ease-out shadow-[0_0_20px_rgba(37,99,235,0.4)]"
-            :style="{ width: porcentajeCarga + '%' }"
-          >
-            <div class="w-full h-full animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            :style="{ width: porcentajeCarga + '%' }">
+            <div class="w-full h-full animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent">
+            </div>
           </div>
         </div>
 
@@ -170,7 +168,8 @@
         <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tight">Temperatura</h2>
-            <span class="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black rounded-full animate-pulse uppercase">Live</span>
+            <span
+              class="px-3 py-1 bg-red-100 text-red-600 text-[10px] font-black rounded-full animate-pulse uppercase">Live</span>
           </div>
           <div class="h-[250px]">
             <canvas ref="chartCanvas"></canvas>
@@ -180,10 +179,59 @@
         <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tight">Caudal</h2>
-            <span class="px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-black rounded-full animate-pulse uppercase">Live</span>
+            <span
+              class="px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-black rounded-full animate-pulse uppercase">Live</span>
           </div>
           <div class="h-[250px]">
             <canvas ref="chartCaudalCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <span class="w-1 h-5 bg-red-500 rounded-full"></span>
+          Alarmas Activas
+          <span v-if="alarmas?.length"
+            class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-black rounded-full uppercase animate-pulse">
+            {{ alarmas.length }}
+          </span>
+        </h3>
+
+        <!-- Sin alarmas -->
+        <div v-if="!alarmas || alarmas.length === 0"
+          class="bg-green-50 border border-green-200 text-green-700 p-6 rounded-xl text-center font-semibold">
+          ✅ No hay alarmas activas
+        </div>
+
+        <!-- Lista de alarmas -->
+        <div v-else class="space-y-4">
+          <div v-for="alarma in alarmas" :key="alarma.id"
+            class="flex items-center justify-between p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition-colors">
+
+            <div>
+              <p class="text-xs uppercase text-red-600 font-black tracking-widest mb-1">
+                Alarma #{{ alarma.id }}
+              </p>
+              <p class="text-lg font-bold text-red-900">
+                {{ alarma.estado.replaceAll('_', ' ') }}
+              </p>
+              <p class="text-xs text-gray-600 mt-1">
+                ⏱ {{ formatFecha(alarma.tiempo) }}
+              </p>
+            </div>
+
+            <div class="text-right space-y-2">
+              <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full uppercase animate-pulse">
+                Pendiente
+              </span>
+
+              <!-- BOTÓN NUEVO -->
+              <button @click="aceptarAlarma(alarma.id)"
+                class="block w-full my-2 px-4 py-2 text-green-600 hover:text-green-700 text-xs font-bold rounded-lg transition">
+                ACEPTAR
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -200,6 +248,7 @@ import { connectSocket, disconnectSocket } from '@/services/socket'
 import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 
 const orden = ref({})
+const alarmas = ref([])
 const temperatura = ref(0)
 const caudal = ref(0)
 const densidad = ref(0)
@@ -276,9 +325,50 @@ async function fetchOrden() {
     }
     if (orden.value.id) {
       await fetchHistorial(orden.value.numeroOrden)
+      await fetchAlarmas(orden.value.id)
     }
   } catch (err) {
     console.error('Error cargando orden:', err)
+  }
+}
+
+async function aceptarAlarma(idAlarma) {
+  try {
+
+    const token = localStorage.getItem('token')
+    await axios.post(
+      "https://cernikiw3.chickenkiller.com/api/v1/orden/set-estado-alarma?estado=ACEPTADA",
+      {
+        id: idAlarma
+      },
+      {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }
+    )
+
+    alert("Alarma aceptada ✅")
+
+  }
+  catch (err) {
+    console.error('Error tocando el boton:', err)
+  }
+
+}
+//alarmas
+async function fetchAlarmas(idOrden) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    alarmas.value = res.data.alarmas
+
+
+    console.log(res);
+
+  } catch (err) {
+    console.error('Error cargando alarma:', err)
   }
 }
 
@@ -368,39 +458,59 @@ onMounted(async () => {
     await fetchOrden()
     timerInterval = setInterval(updateTiempoTranscurrido, 1000);
 
-    connectSocket(numeroOrden, token, (data) => {
-      if (data.masaAcumulada !== undefined) {
-        masaActual.value = data.masaAcumulada;
-      }
-      if (data.orden) {
-        orden.value = data.orden;
-        if (data.orden.ultimaMasaAcumulada) {
+    connectSocket(
+      numeroOrden,
+      token,
+      //callback 1 para datos
+      (data) => {
+        console.log('weoeeo');
+
+        console.log(data);
+
+        if (data.masaAcumulada !== undefined) {
+          masaActual.value = data.masaAcumulada;
+        }
+        if (data.orden) {
+          orden.value = data.orden;
+          if (data.orden.ultimaMasaAcumulada) {
             masaActual.value = data.orden.ultimaMasaAcumulada;
+          }
         }
-      }
-      if (data.temperatura !== undefined) temperatura.value = data.temperatura
-      if (data.caudal !== undefined) caudal.value = data.caudal
-      if (data.densidadProducto !== undefined) densidad.value = data.densidadProducto
-      const ahora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-      if (chartInstance && data.temperatura !== undefined) {
-        chartInstance.data.labels.push(ahora)
-        chartInstance.data.datasets[0].data.push(data.temperatura)
-        if (chartInstance.data.labels.length > 30) {
-          chartInstance.data.labels.shift()
-          chartInstance.data.datasets[0].data.shift()
+        if (data.temperatura !== undefined) temperatura.value = data.temperatura
+        if (data.caudal !== undefined) caudal.value = data.caudal
+        if (data.densidadProducto !== undefined) densidad.value = data.densidadProducto
+        const ahora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        if (chartInstance && data.temperatura !== undefined) {
+          chartInstance.data.labels.push(ahora)
+          chartInstance.data.datasets[0].data.push(data.temperatura)
+          if (chartInstance.data.labels.length > 30) {
+            chartInstance.data.labels.shift()
+            chartInstance.data.datasets[0].data.shift()
+          }
+          chartInstance.update('none')
         }
-        chartInstance.update('none')
-      }
-      if (chartCaudalInstance && data.caudal !== undefined) {
-        chartCaudalInstance.data.labels.push(ahora)
-        chartCaudalInstance.data.datasets[0].data.push(data.caudal)
-        if (chartCaudalInstance.data.labels.length > 30) {
-          chartCaudalInstance.data.labels.shift()
-          chartCaudalInstance.data.datasets[0].data.shift()
+        if (chartCaudalInstance && data.caudal !== undefined) {
+          chartCaudalInstance.data.labels.push(ahora)
+          chartCaudalInstance.data.datasets[0].data.push(data.caudal)
+          if (chartCaudalInstance.data.labels.length > 30) {
+            chartCaudalInstance.data.labels.shift()
+            chartCaudalInstance.data.datasets[0].data.shift()
+          }
+          chartCaudalInstance.update('none')
         }
-        chartCaudalInstance.update('none')
-      }
-    })
+      },
+      //callback 2 para alarmas
+      (dataAlarma) => {
+        console.log(dataAlarma);
+        const nuevaAlarma = {
+          id: dataAlarma.id,
+          estado: dataAlarma.estado,
+          tiempo: dataAlarma.fechaCreacion // Mapeamos el nombre aquí
+        };
+        alarmas.value.unshift(nuevaAlarma);
+
+
+      })
   } catch (err) {
     console.error("Error en monitor:", err)
   }
@@ -412,4 +522,10 @@ onBeforeUnmount(() => {
   if (chartInstance) chartInstance.destroy()
   if (chartCaudalInstance) chartCaudalInstance.destroy()
 })
+
+const formatFecha = (fecha) => {
+  if (!fecha) return 'Sin fecha'
+  const d = new Date(fecha.replace(' ', 'T'))
+  return d.toLocaleString()
+}
 </script>
