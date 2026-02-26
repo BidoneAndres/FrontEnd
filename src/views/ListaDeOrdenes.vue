@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-16 font-inter">
     <div class="max-w-7xl mx-auto px-6">
-      
+
       <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8">
         <div>
           <h2 class="text-5xl font-inter-tight font-bold tracking-tight text-gray-900">
@@ -11,16 +11,16 @@
             Seguimiento de flujo por estados operativos.
           </p>
         </div>
-        
+
         <div class="flex flex-wrap gap-2 p-1 bg-gray-200 rounded-2xl">
-          <button 
-            v-for="estado in estadosConfig" 
+          <button
+            v-for="estado in estadosConfig"
             :key="estado.id"
             @click="filtroActual = estado.id"
             :class="[
               'px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-tighter',
-              filtroActual === estado.id 
-                ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100' 
+              filtroActual === estado.id
+                ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
             ]"
           >
@@ -30,8 +30,8 @@
       </div>
 
       <div v-if="!loading && ordenesFiltradas.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div 
-          v-for="orden in ordenesFiltradas" 
+        <div
+          v-for="orden in ordenesFiltradas"
           :key="orden.id"
           @click="irAlMonitor(orden.id)"
           class="group bg-white border border-gray-200 p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer relative"
@@ -43,7 +43,7 @@
               <span class="text-[10px] font-mono text-gray-400 uppercase tracking-widest block">Código Sistema</span>
               <span class="text-lg font-bold text-gray-900">N° {{ orden.numeroOrden || orden.id }}</span>
             </div>
-            
+
             <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 border border-gray-100 font-bold text-gray-400 group-hover:border-gray-900 group-hover:text-gray-900 transition-colors">
               {{ orden.estado.split('_')[1] }}
             </div>
@@ -56,7 +56,7 @@
           <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-6">
             {{ formatEstadoTexto(orden.estado) }}
           </p>
-          
+
           <div class="mt-6 pt-6 border-t border-gray-100 space-y-3 font-inter">
             <div class="flex justify-between">
               <span class="text-xs text-gray-400 uppercase font-bold">Patente</span>
@@ -131,7 +131,7 @@ function getColorEstado(estado) {
 async function fetchOrdenes() {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:8080/api/v1/orden', {
+    const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/orden', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     ordenes.value = res.data

@@ -8,12 +8,12 @@
         <div>
           <label for="email" class="block text-sm/6 font-medium text-gray-100">Email address</label>
           <div class="mt-2">
-            <input 
+            <input
               v-model="email"
-              id="email" 
-              type="text" 
-              required 
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" 
+              id="email"
+              type="text"
+              required
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
             />
           </div>
         </div>
@@ -23,12 +23,12 @@
             <label for="password" class="block text-sm/6 font-medium text-gray-100">Password</label>
           </div>
           <div class="mt-2">
-            <input 
+            <input
               v-model="password"
-              id="password" 
-              type="password" 
-              required 
-              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" 
+              id="password"
+              type="password"
+              required
+              class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
             />
           </div>
         </div>
@@ -66,9 +66,9 @@ const router = useRouter();
 const handleLogin = async () => {
   try {
     errorMsg.value = ''; // Limpiamos errores previos
-    
+
     // Tu backend espera un JSON con "username" y "password"
-    const response = await axios.post('http://localhost:8080/api/v1/login/json', {
+    const response = await axios.post('https://cernikiw3.chickenkiller.com/api/v1/login/json', {
       username: email.value, // Usamos el email como username
       password: password.value
     }, {
@@ -80,11 +80,11 @@ const handleLogin = async () => {
     if (token) {
       // 3. Guardamos el token en el almacenamiento del navegador
       localStorage.setItem('token', token);
-      
+
       console.log('¡Login exitoso!');
       console.log(token)
       // 4. Redirigimos al usuario a la página principal (Home/Dashboard)
-      router.push('/home'); 
+      router.push('/home');
     }
   } catch (error) {
     console.error('Error al iniciar sesión:', error);

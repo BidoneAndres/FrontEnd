@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/v1/login/json'; 
+const API_URL = 'https://cernikiw3.chickenkiller.com/api/v1/login/json';
 
 export const login = async (username, password) => {
   try {
@@ -8,7 +8,7 @@ export const login = async (username, password) => {
       username: username,
       password: password
     }, {
-      responseType: 'text' 
+      responseType: 'text'
     });
 
     if (response.data) {
