@@ -9,7 +9,7 @@ const loading = ref(true);
 async function fetchClientes() {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:8080/api/v1/camion', {
+    const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/camion', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     camiones.value = res.data;
@@ -46,9 +46,9 @@ onMounted(() => {
       </div>
 
       <div v-else class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div v-for="c in camiones" :key="c.id" 
+        <div v-for="c in camiones" :key="c.id"
           class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-200 hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer flex flex-col justify-between">
-          
+
           <div>
             <h2 class="text-3xl font-inter-tight font-bold text-gray-900 tracking-tighter mt-6 group-hover:text-blue-600 transition-colors">
               Camion#{{ c.id }}

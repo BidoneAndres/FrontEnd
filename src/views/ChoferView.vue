@@ -9,7 +9,7 @@ const loading = ref(true);
 async function fetchClientes() {
   try {
     const token = localStorage.getItem('token')
-    const res = await axios.get('http://localhost:8080/api/v1/chofer', {
+    const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/chofer', {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     chofer.value = res.data;
