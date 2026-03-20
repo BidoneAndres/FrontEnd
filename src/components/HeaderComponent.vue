@@ -3,7 +3,7 @@
     <nav aria-label="Global" class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
 
       <div class="hidden lg:flex lg:gap-x-10 items-center">
-        <a href="/ui/" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Inicio
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
@@ -30,7 +30,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/ui/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Clientes<span class="absolute inset-0"></span></a>
+                  <a href="/clientes" class="block font-bold text-white tracking-tighter text-xs uppercase">Clientes<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Registrados en las ordenes</p>
                 </div>
               </div>
@@ -42,7 +42,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/ui/productos" class="block font-bold text-white tracking-tighter text-xs uppercase">Productos<span class="absolute inset-0"></span></a>
+                  <a href="/productos" class="block font-bold text-white tracking-tighter text-xs uppercase">Productos<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Catálogo de carga</p>
                 </div>
               </div>
@@ -54,7 +54,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/ui/camiones" class="block font-bold text-white tracking-tighter text-xs uppercase">Camiones<span class="absolute inset-0"></span></a>
+                  <a href="/camiones" class="block font-bold text-white tracking-tighter text-xs uppercase">Camiones<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Unidades de transporte</p>
                 </div>
               </div>
@@ -66,7 +66,7 @@
                   </svg>
                 </div>
                 <div class="flex-auto">
-                  <a href="/ui/choferes" class="block font-bold text-white tracking-tighter text-xs uppercase">Choferes<span class="absolute inset-0"></span></a>
+                  <a href="/choferes" class="block font-bold text-white tracking-tighter text-xs uppercase">Choferes<span class="absolute inset-0"></span></a>
                   <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Personal habilitado</p>
                 </div>
               </div>
@@ -75,12 +75,12 @@
           </el-popover>
         </div>
 
-        <a href="/ui/conciliaciones" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/conciliaciones" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Conciliaciones
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
 
-        <a href="/ui/home" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
+        <a href="/home" class="group relative py-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-all duration-300">
           Ordenes
           <span class="absolute bottom-0 left-0 w-full h-[1px] bg-white opacity-0 scale-x-0 group-hover:opacity-20 group-hover:scale-x-100 transition-all duration-500 origin-left"></span>
         </a>
@@ -93,7 +93,7 @@
 
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
 
-        <a v-if="!isLoggedIn" href="/ui/login"
+        <a v-if="!isLoggedIn" href="/login"
            class="group relative py-2 text-xs font-black uppercase tracking-[0.2em] text-blue-400 hover:text-white transition-all duration-300">
           SISTEMA LOGIN
           <span class="absolute bottom-0 left-0 w-full h-[2px] bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)] scale-x-50 group-hover:scale-x-100 transition-transform duration-500"></span>
