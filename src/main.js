@@ -4,9 +4,33 @@ import './index.css'
 import App from './App.vue'
 import router from './router'
 
-const app = createApp(App)
 
-app.use(createPinia())
-app.use(router)
+import keycloak from './services/keycloak' 
 
-app.mount('#app')
+
+keycloak.init({ 
+  onLoad: 'login-required' 
+})
+.then((authenticated) => {
+  if (!authenticated) {
+   
+    window.location.reload();
+  } else {
+    console.log('¡Usuario autenticado con éxito!');
+    
+    
+    const app = createApp(App)
+
+    app.use(createPinia())
+    app.use(router)
+
+    
+    app.config.globalProperties.$keycloak = keycloak;
+
+    app.mount('#app')
+  }
+})
+.catch((error) => {
+  console.error('Error al conectar con Keycloak:', error);
+ 
+});

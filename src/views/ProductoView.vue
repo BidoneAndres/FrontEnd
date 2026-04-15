@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import api from '@/services/api'
 //import { useRouter } from 'vue-router'
 
 //const router = useRouter()
@@ -15,10 +16,8 @@ const isSaving = ref(false);
 
 async function fetchProductos() {
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/producto', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    
+    const res = await api.get("/producto");
     productos.value = res.data;
   } catch (error) {
     console.error('Error al obtener productos:', error);
@@ -32,13 +31,11 @@ async function crearProducto() {
 
   try {
     isSaving.value = true;
-    const token = localStorage.getItem('token');
+    
 
 
-    await axios.post('https://cernikiw3.chickenkiller.com/api/v1/producto',
-      { producto: nuevoNombre.value },
-      { headers: { 'Authorization': `Bearer ${token}` } }
-    );
+    await api.post("/producto", { producto: nuevoNombre.value });
+
 
 
     nuevoNombre.value = '';

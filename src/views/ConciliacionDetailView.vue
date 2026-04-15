@@ -106,14 +106,16 @@ const loading = ref(true)
 async function fetchDetalleConciliacion() {
   try {
     loading.value = true
-    const token = localStorage.getItem('token')
+    //const token = localStorage.getItem('token')
     const numeroOrden = route.params.id
 
     // Ajustamos el endpoint para buscar por numero de orden
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/conciliacion/orden/${numeroOrden}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-
+    //const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/conciliacion/orden/${numeroOrden}`, {
+      //headers: { 'Authorization': `Bearer ${token}` }
+    //})
+    
+    //implementado con keycloack
+    const res = await api.get(`/conciliacion/orden/${numeroOrden}`)
     conciliacion.value = res.data
   } catch (error) {
     console.error('Error al cargar detalle:', error)
