@@ -256,10 +256,12 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import keycloak from '@/services/keycloak'
 import Chart from 'chart.js/auto'
 import { connectSocket, disconnectSocket } from '@/services/socket'
 import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
+import api from '@/services/api'
+
 
 const orden = ref({})
 const alarmas = ref([])
@@ -335,11 +337,8 @@ function updateTiempoTranscurrido() {
 
 async function fetchOrden() {
   try {
-    const token = localStorage.getItem('token')
-    if (!token) return
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/orden/${numeroOrden}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    //Implementado ya con keycloack 
+    const res = await api.get(`/orden/${numeroOrden}`)
     orden.value = res.data
     if (res.data.ultimaMasaAcumulada) {
       masaActual.value = res.data.ultimaMasaAcumulada;
@@ -355,8 +354,9 @@ async function fetchOrden() {
 
 async function aceptarAlarma(idAlarma) {
   try {
-    const token = localStorage.getItem('token')
-    await axios.post("https://cernikiw3.chickenkiller.com/api/v1/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma }, { headers: { 'Authorization': `Bearer ${token}` } })
+
+    //Tambien implementado con keycloack    
+    await api.post("/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma });
     alert("Alarma aceptada ")
     await fetchAlarmas(orden.value.id)
   } catch (err) {
@@ -366,9 +366,12 @@ async function aceptarAlarma(idAlarma) {
 
 async function fetchAlarmas(idOrden) {
   try {
-    const token = localStorage.getItem('token')
-    if (!token) return
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, { headers: { 'Authorization': `Bearer ${token}` } })
+    //const token = localStorage.getItem('token')
+    //if (!token) return
+    //const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, { headers: { 'Authorization': `Bearer ${token}` } })
+    
+    //Esto tambien esta implementado con keycloack
+    const res = await api.get(`/alarmas?idOrden=${idOrden}&size=20`)
     alarmas.value = res.data.alarmas
   } catch (err) {
     console.error('Error cargando alarma:', err)
@@ -377,8 +380,12 @@ async function fetchAlarmas(idOrden) {
 
 async function fetchHistorial(nroOrden) {
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, { headers: { 'Authorization': `Bearer ${token}` } })
+    //const token = localStorage.getItem('token')
+    //const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, { headers: { 'Authorization': `Bearer ${token}` } })
+    
+    //Implementado con keycloack
+    const res = await api.get(`/carga/${nroOrden}`)
+    
     const historial = res.data
     if (historial && historial.length > 0) {
       historialCargas.value = [...historial].reverse().slice(0, 20)
@@ -408,26 +415,44 @@ function toggleDetalle() { showDetalle.value = !showDetalle.value }
 
 onMounted(async () => {
   try {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    
+    await keycloak.updateToken(30)
+    const token = keycloak.token
+    
+    
+    if (!token) {
+      console.error("No hay token de Keycloak disponible");
+      return;
+    }
+
     await nextTick()
+    
+    
     const commonOptions = {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: { y: { grid: { color: '#f3f4f6' }, beginAtZero: false }, x: { grid: { display: false } } }
     }
+    
     chartInstance = new Chart(chartCanvas.value, {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Temp', data: [], borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
+    
     chartCaudalInstance = new Chart(chartCaudalCanvas.value, {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Caudal', data: [], borderColor: 'rgb(37, 99, 235)', backgroundColor: 'rgba(37, 99, 235, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
+
+    
     await fetchOrden()
+    
+    
     timerInterval = setInterval(updateTiempoTranscurrido, 1000);
+    
+    
     connectSocket(numeroOrden, token,
       (data) => {
         if (data.masaAcumulada !== undefined) { 
@@ -461,7 +486,9 @@ onMounted(async () => {
         const nuevaAlarma = { id: dataAlarma.id, estado: dataAlarma.estado, tiempo: dataAlarma.fechaCreacion };
         alarmas.value.unshift(nuevaAlarma);
       })
-  } catch (err) { console.error("Error en monitor:", err) }
+  } catch (err) { 
+    console.error("Error en monitor:", err) 
+  }
 })
 
 onBeforeUnmount(() => {

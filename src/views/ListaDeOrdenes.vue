@@ -84,16 +84,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted,onBeforeUnmount, computed } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import api from '@/services/api'
 import { useRouter } from 'vue-router'
 import { connectSocket, disconnectSocket } from '@/services/socket'
 
-const ordenes = ref([])
+import keycloak from '@/services/keycloak' 
+
+const ordenes = ref<any[]>([]) 
 const loading = ref(true)
 const filtroActual = ref('TODOS')
 const router = useRouter()
-
 
 const estadosConfig = [
   { id: 'TODOS', shortLabel: 'Todas' },
@@ -109,17 +110,13 @@ const ordenesFiltradas = computed(() => {
   return ordenes.value.filter(o => o.estado === filtroActual.value)
 })
 
-
 function formatEstadoTexto(estado: string) {
-
   return estado.split('_').slice(2).join(' ')
 }
 
-function getColorEstado(estado) {
-
+function getColorEstado(estado: string) {
   if (!estado) return 'bg-gray-200'
   
-
   if (estado.includes('ESTADO_1')) return 'bg-gray-400'
   if (estado.includes('ESTADO_2')) return 'bg-orange-500'
   if (estado.includes('ESTADO_3')) return 'bg-blue-600'
@@ -130,13 +127,12 @@ function getColorEstado(estado) {
 
 async function fetchOrdenes() {
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get('https://cernikiw3.chickenkiller.com/api/v1/orden', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    
+    //implementado con keycloack
+    const res = await api.get('/orden')
     ordenes.value = res.data
   } catch (err) {
-    console.error(err)
+    console.error('Error al traer órdenes:', err)
   } finally {
     loading.value = false
   }
@@ -147,20 +143,13 @@ function irAlMonitor(id: number) {
 }
 
 onMounted(async () => {
-
   await fetchOrdenes()
 
-
-  const token = localStorage.getItem('token')
-  if (token) {
-
-  connectSocket('orden', token, (data) => {
-
-    console.log("¡Alarma de nueva orden recibida! Recargando lista...");
-    
-  
-    fetchOrdenes(); 
-  });
+  if (keycloak.token) {
+    connectSocket('orden', keycloak.token, (data) => {
+      console.log("¡Alarma de nueva orden recibida! Recargando lista...");
+      fetchOrdenes(); 
+    });
   }
 })
 
