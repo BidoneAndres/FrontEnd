@@ -9,6 +9,9 @@ import ConciliacionView from '@/views/ConciliacionView.vue'
 import OrdenMonitorView from '@/views/OrdenMonitorView.vue'
 import ListaDeOrdenes from '@/views/ListaDeOrdenes.vue'
 import ConciliacionDetailView from '@/views/ConciliacionDetailView.vue'
+import SinPermisos from '@/views/SinPermisos.vue';
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -63,6 +66,11 @@ const router = createRouter({
       path: '/home',
       name: 'ordenes',
       component: ListaDeOrdenes
+    },
+    {
+    path: '/sin-permisos',
+    name: 'SinPermisos',
+    component: SinPermisos,
     }
 
   ],

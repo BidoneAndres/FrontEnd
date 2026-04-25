@@ -1,9 +1,14 @@
 import axios from 'axios'
-
 import keycloak from './keycloak' 
+import router from '@/router';
+
+
+console.log('API INSTANCE CARGADA');
 
 const api = axios.create({
   baseURL: 'https://cernikiw3.chickenkiller.com/api/v1',
+  responseType: 'text', 
+  transformResponse: [(data) => data] 
 });
 
 
@@ -31,4 +36,35 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+
+    console.log('ERROR COMPLETO:', error);
+
+   
+    const status = error.response?.status;
+
+    if (status === 403) {
+      console.log('403 DETECTADO (normal)');
+      router.push('/sin-permisos');
+    }
+
+    if (status === 401) {
+      keycloak.login();
+    }
+
+   
+    if (!error.response) {
+      console.log('ERROR SIN RESPONSE');
+
+      if (error.message?.includes('403')) {
+        console.log('403 DETECTADO (fallback)');
+        router.push('/sin-permisos');
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 export default api;

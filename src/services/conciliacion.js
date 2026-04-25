@@ -7,3 +7,4 @@ export function getConciliaciones() {
 export function getConciliacionesDetail(id) {
   return api.get(`/conciliacion/detail/${id}`)
 }
+
