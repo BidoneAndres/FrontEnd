@@ -13,29 +13,20 @@
         </div>
 
         <div class="flex flex-wrap gap-2 p-1 bg-gray-200 rounded-2xl">
-          <button
-            v-for="estado in estadosConfig"
-            :key="estado.id"
-            @click="filtroActual = estado.id"
-            :class="[
-              'px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-tighter',
-              filtroActual === estado.id
-                ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
-            ]"
-          >
+          <button v-for="estado in estadosConfig" :key="estado.id" @click="filtroActual = estado.id" :class="[
+            'px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-tighter',
+            filtroActual === estado.id
+              ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100'
+              : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+          ]">
             {{ estado.shortLabel }}
           </button>
         </div>
       </div>
 
       <div v-if="!loading && ordenesFiltradas.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div
-          v-for="orden in ordenesFiltradas"
-          :key="orden.id"
-          @click="irAlMonitor(orden.id)"
-          class="group bg-white border border-gray-200 p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer relative"
-        >
+        <div v-for="orden in ordenesFiltradas" :key="orden.id" @click="irAlMonitor(orden.id)"
+          class="group bg-white border border-gray-200 p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer relative">
           <div :class="['absolute left-0 top-12 bottom-12 w-1.5 rounded-r-full', getColorEstado(orden.estado)]"></div>
 
           <div class="flex justify-between items-start mb-6">
@@ -43,9 +34,9 @@
               <span class="text-[10px] font-mono text-gray-400 uppercase tracking-widest block">Código Sistema</span>
               <span class="text-lg font-bold text-gray-900">N° {{ orden.numeroOrden || orden.id }}</span>
             </div>
-
-            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 border border-gray-100 font-bold text-gray-400 group-hover:border-gray-900 group-hover:text-gray-900 transition-colors">
-              {{ orden.estado.split('_')[1] }}
+            <div
+              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 border border-gray-100 font-bold text-gray-400 group-hover:border-gray-900 group-hover:text-gray-900 transition-colors">
+              {{ orden.estado?.split('_')[1] || '-' }}
             </div>
           </div>
 
@@ -75,9 +66,12 @@
         </div>
       </div>
 
-      <div v-else-if="!loading" class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+      <div v-else-if="!loading"
+        class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
         <p class="text-gray-400 font-inter-tight text-xl mb-6">No hay registros en esta etapa.</p>
-        <button @click="filtroActual = 'TODOS'" class="px-8 py-3 bg-gray-900 text-white rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Ver historial completo</button>
+        <button @click="filtroActual = 'TODOS'"
+          class="px-8 py-3 bg-gray-900 text-white rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Ver
+          historial completo</button>
       </div>
     </div>
   </div>
@@ -160,6 +154,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.font-inter-tight { font-family: 'Inter Tight', sans-serif; }
-.font-inter { font-family: 'Inter', sans-serif; }
+.font-inter-tight {
+  font-family: 'Inter Tight', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
 </style>
