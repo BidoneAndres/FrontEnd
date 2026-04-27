@@ -2,23 +2,30 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../services/api';
-import * as testApi from '../services/api';
-
-console.log('TEST API:', testApi);
 
 const router = useRouter()
 const conciliaciones = ref([]);
 const loading = ref(true);
 
-
-
-
 onMounted(async () => {
   try {
     const res = await api.get('/conciliacion');
-   
-    console.log('Datos de conciliaciones:', res.data);
-    conciliaciones.value = res.data;
+
+    // 1. Interceptamos y forzamos el parseo si llega como String
+    let data = res.data;
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        console.error('Error forzando el parseo a JSON:', e);
+      }
+    }
+
+    console.log('Datos de conciliaciones reales:', data);
+
+    // 2. Asignamos la data ya convertida a Array
+    conciliaciones.value = Array.isArray(data) ? data : (data?.content || []);
+
   } catch (error) {
     console.error('Error al obtener conciliaciones:', error);
   } finally {
@@ -39,9 +46,11 @@ function formatted(rawDate) {
 }
 
 function goToDetail(numeroOrden) {
+  if(!numeroOrden) return;
   console.log("Valor que estoy enviando al detail:", numeroOrden)
   router.push({ name: 'conciliacion-detail', params: { id: numeroOrden } })
 }
+
 function getOrderNumber(c) {
   return c.orden?.numeroOrden || c.orden?.id || c.id || 'S/N';
 }
@@ -65,7 +74,7 @@ function getOrderNumber(c) {
           class="group bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-200 hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer">
 
           <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-            Finalizado el: 
+            Finalizado el:
             <span class="text-gray-900 ml-1">
               {{ formatted(c.orden?.fechaPesajeFinal) }}
             </span>
@@ -78,7 +87,7 @@ function getOrderNumber(c) {
 
             <span
               class="inline-flex items-center rounded-full bg-green-50 px-4 py-1.5 text-xs font-black text-green-600 border border-green-100 uppercase tracking-tighter">
-              {{ c.orden?.estado?.split('_').pop() || 'FINALIZADA' }}
+              {{ c.orden?.estado ? c.orden.estado.split('_').pop() : 'FINALIZADA' }}
             </span>
           </div>
 
@@ -101,7 +110,7 @@ function getOrderNumber(c) {
             <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 group-hover:bg-white transition-colors">
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Neto cargado</p>
               <p class="text-2xl font-bold text-blue-600 mt-1">
-                {{ c.netoCargado || (c.pesoFinal - c.pesoInicial) }} <span class="text-sm font-medium">kg</span>
+                {{ c.netoPorBalanza || (c.pesoFinal - c.pesoInicial) }} <span class="text-sm font-medium">kg</span>
               </p>
             </div>
           </div>
