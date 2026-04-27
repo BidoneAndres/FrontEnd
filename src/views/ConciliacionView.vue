@@ -1,15 +1,21 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getConciliaciones } from '../services/conciliacion'
 import { useRouter } from 'vue-router'
+import api from '../services/api';
+import * as testApi from '../services/api';
+
+console.log('TEST API:', testApi);
 
 const router = useRouter()
 const conciliaciones = ref([]);
 const loading = ref(true);
 
+
+
+
 onMounted(async () => {
   try {
-    const res = await getConciliaciones();
+    const res = await api.get('/conciliacion');
    
     console.log('Datos de conciliaciones:', res.data);
     conciliaciones.value = res.data;
