@@ -4,7 +4,7 @@
 
       <div class="cursor-pointer select-none group" @click="toggleDetalle">
         <h1 class="text-4xl font-bold flex items-center gap-3 text-gray-900">
-          Monitor de Orden #{{ orden.numeroOrden || '...' }}
+          Monitor de Orden #{{ orden?.numeroOrden || '...' }}
           <span class="text-gray-400 text-2xl group-hover:text-blue-500 transition-colors">
             {{ showDetalle ? '▲' : '▼' }}
           </span>
@@ -21,27 +21,27 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Número de Orden</p>
-              <p class="text-gray-800 font-medium">{{ orden.numeroOrden }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.numeroOrden }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Camión</p>
-              <p class="text-gray-800 font-medium">{{ orden.camion?.patente || 'No disponible' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.camion?.patente || 'No disponible' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Cliente</p>
-              <p class="text-gray-800 font-medium">{{ orden.cliente?.razonSocial || 'No disponible' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.cliente?.razonSocial || 'No disponible' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Preset (Objetivo)</p>
-              <p class="text-gray-800 font-bold text-blue-600">{{ orden.preset }} kg</p>
+              <p class="text-gray-800 font-bold text-blue-600">{{ orden?.preset }} kg</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fecha Recepción</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaRecepcionOrden }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.fechaRecepcionOrden }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fecha Estimada</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaEstimada }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.fechaEstimada }}</p>
             </div>
           </div>
         </div>
@@ -54,34 +54,34 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Pesaje Inicial</p>
-              <p class="text-gray-800 font-medium text-sm">{{ orden.fechaPesajeInicial || 'Pendiente' }}</p>
-              <p class="text-sm font-bold text-gray-900 mt-2">Peso Inicial: {{ orden.pesoInicial || '0' }} kg</p>
+              <p class="text-gray-800 font-medium text-sm">{{ orden?.fechaPesajeInicial || 'Pendiente' }}</p>
+              <p class="text-sm font-bold text-gray-900 mt-2">Peso Inicial: {{ orden?.pesoInicial || '0' }} kg</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Inicio Carga</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaInicioCarga || '--:--' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.fechaInicioCarga || '--:--' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Fin Carga</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaFinCarga || '--:--' }}</p>
+              <p class="text-gray-800 font-medium">{{ orden?.fechaFinCarga || '--:--' }}</p>
             </div>
             <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
               <p class="text-xs uppercase text-gray-500 mb-1 font-bold">Pesaje Final</p>
-              <p class="text-gray-800 font-medium">{{ orden.fechaPesajeFinal || 'Pendiente' }}</p>
-              <p class="text-sm font-bold text-gray-900 mt-2">Peso Inicial: {{ orden.pesoFinal || '0' }} kg</p>
+              <p class="text-gray-800 font-medium">{{ orden?.fechaPesajeFinal || 'Pendiente' }}</p>
+              <p class="text-sm font-bold text-gray-900 mt-2">Peso Final: {{ orden?.pesoFinal || '0' }} kg</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div :class="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
+        <div :class="orden?.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA' ? 'md:col-span-1' : 'md:col-span-2'"
           class="p-8 rounded-2xl shadow-lg border bg-blue-600 border-blue-700 text-white flex flex-col justify-center transition-all duration-500">
           <h2 class="text-xs font-black uppercase tracking-[0.2em] opacity-80 mb-2">Estado Actual</h2>
-          <p class="text-4xl font-black italic tracking-tighter">{{ orden.estado || 'ESPERANDO...' }}</p>
+          <p class="text-4xl font-black italic tracking-tighter">{{ orden?.estado || 'ESPERANDO...' }}</p>
         </div>
 
-        <div v-if="orden.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA'"
+        <div v-if="orden?.estado === 'ESTADO_2_EN_PROCESO_DE_CARGA'"
           class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col justify-center">
           <h2 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Tiempo de Carga</h2>
           <p class="text-4xl font-black text-gray-900 tabular-nums">{{ tiempoTranscurridoDisplay }}</p>
@@ -119,23 +119,23 @@
           <div>
             <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Monitoreo de Producto</p>
             <h3 class="text-4xl font-black text-gray-900 uppercase tracking-tighter">
-              {{ orden.producto?.producto || 'SIN PRODUCTO' }}
+              {{ orden?.producto?.producto || 'SIN PRODUCTO' }}
             </h3>
           </div>
 
           <div class="text-center pb-1">
             <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">ETA (Llenado)</p>
 
-            <p v-if="orden.preset && masaActual < orden.preset" class="text-3xl font-black text-gray-900 tabular-nums">
+            <p v-if="orden?.preset && masaActual < orden.preset" class="text-3xl font-black text-gray-900 tabular-nums">
               {{ etaDisplay }}
             </p>
 
-            <p v-else-if="orden.preset && masaActual > orden.preset"
+            <p v-else-if="orden?.preset && masaActual > orden.preset"
               class="text-3xl font-black text-red-600 animate-pulse tabular-nums">
               ¡ATENCION!
             </p>
 
-            <p v-else-if="orden.preset" class="text-3xl font-black text-green-600 tabular-nums">
+            <p v-else-if="orden?.preset" class="text-3xl font-black text-green-600 tabular-nums">
               FINALIZADO
             </p>
 
@@ -161,7 +161,7 @@
         <div class="flex justify-between mt-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
           <span>0 kg</span>
           <span class="text-gray-900 font-bold">Masa Actual: {{ masaActual }} kg</span>
-          <span>Objetivo: {{ orden.preset || 30000 }} kg</span>
+          <span>Objetivo: {{ orden?.preset || 30000 }} kg</span>
         </div>
       </div>
 
@@ -208,7 +208,7 @@
               class="flex items-center justify-between p-5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 transition-colors">
               <div>
                 <p class="text-xs uppercase text-red-600 font-black tracking-widest mb-1">Alarma #{{ alarma.id }}</p>
-                <p class="text-lg font-bold text-red-900">{{ alarma.estado.replaceAll('_', ' ') }}</p>
+                <p class="text-lg font-bold text-red-900">{{ alarma.estado?.replaceAll('_', ' ') || 'ALARMA' }}</p>
                 <p class="text-xs text-gray-600 mt-1">{{ formatFecha(alarma.tiempo) }}</p>
               </div>
               <div class="text-right space-y-2">
@@ -234,18 +234,18 @@
             <div v-for="(carga, index) in historialCargas" :key="index"
               class="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white transition-all">
               <div class="flex flex-col">
-                <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">{{ carga.timestamp?.split('
-                  ')[1] || '00:00:00' }}</span>
-                <span class="text-sm font-bold text-gray-900">{{ carga.masaAcumulada }} kg</span>
+                <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">{{
+                  carga?.timestamp?.split(' ')[1] || '00:00:00' }}</span>
+                <span class="text-sm font-bold text-gray-900">{{ carga?.masaAcumulada }} kg</span>
               </div>
               <div class="text-right grid grid-cols-2 gap-x-4">
                 <div>
                   <p class="text-[8px] uppercase text-gray-400 font-bold">Temp</p>
-                  <p class="text-xs font-black text-red-600">{{ carga.temperatura }}°</p>
+                  <p class="text-xs font-black text-red-600">{{ carga?.temperatura }}°</p>
                 </div>
                 <div>
                   <p class="text-[8px] uppercase text-gray-400 font-bold">Caudal</p>
-                  <p class="text-xs font-black text-blue-600">{{ carga.caudal }}</p>
+                  <p class="text-xs font-black text-blue-600">{{ carga?.caudal }}</p>
                 </div>
               </div>
             </div>
@@ -264,7 +264,6 @@ import Chart from 'chart.js/auto'
 import { connectSocket, disconnectSocket } from '@/services/socket'
 import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import api from '@/services/api'
-
 
 const orden = ref({})
 const alarmas = ref([])
@@ -342,20 +341,17 @@ async function fetchOrden() {
   try {
     const res = await api.get(`/orden/${numeroOrden}`)
 
-    // 1. Forzar a JSON si llega como texto
     let data = res.data
     if (typeof data === 'string') {
       try { data = JSON.parse(data) } catch (e) { }
     }
 
-    // 2. Asignación segura (por si el backend manda un array de 1 elemento o el objeto directo)
     if (Array.isArray(data)) {
       orden.value = data[0] || {}
     } else {
       orden.value = data?.content || data?.data || data || {}
     }
 
-    // 3. Cargar datos dependientes
     if (orden.value.ultimaMasaAcumulada) {
       masaActual.value = orden.value.ultimaMasaAcumulada;
     }
@@ -369,17 +365,6 @@ async function fetchOrden() {
   }
 }
 
-async function aceptarAlarma(idAlarma) {
-  try {
-
-    //Tambien implementado con keycloack
-    await api.post("/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma });
-    alert("Alarma aceptada ")
-    await fetchAlarmas(orden.value.id)
-  } catch (err) {
-    console.error('Error tocando el boton:', err)
-  }
-}
 async function fetchAlarmas(idOrden) {
   try {
     const res = await api.get(`/alarmas?idOrden=${idOrden}&size=20`)
@@ -394,13 +379,14 @@ async function fetchAlarmas(idOrden) {
     console.error('Error cargando alarmas:', err)
   }
 }
+
 async function fetchHistorial(nroOrden) {
   try {
     const res = await api.get(`/carga/${nroOrden}`)
 
     let data = res.data
     if (typeof data === 'string') {
-      try { data = JSON.parse(data) } catch (e) {}
+      try { data = JSON.parse(data) } catch (e) { }
     }
 
     const historial = Array.isArray(data) ? data : (data?.content || data?.data || [])
@@ -431,14 +417,24 @@ async function fetchHistorial(nroOrden) {
   }
 }
 
+async function aceptarAlarma(idAlarma) {
+  try {
+    await api.post("/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma });
+    alert("Alarma aceptada ")
+    if (orden.value.id) {
+      await fetchAlarmas(orden.value.id)
+    }
+  } catch (err) {
+    console.error('Error tocando el boton:', err)
+  }
+}
+
 function toggleDetalle() { showDetalle.value = !showDetalle.value }
 
 onMounted(async () => {
   try {
-
     await keycloak.updateToken(30)
     const token = keycloak.token
-
 
     if (!token) {
       console.error("No hay token de Keycloak disponible");
@@ -446,7 +442,6 @@ onMounted(async () => {
     }
 
     await nextTick()
-
 
     const commonOptions = {
       responsive: true, maintainAspectRatio: false,
@@ -466,12 +461,9 @@ onMounted(async () => {
       options: commonOptions
     })
 
-
     await fetchOrden()
 
-
     timerInterval = setInterval(updateTiempoTranscurrido, 1000);
-
 
     connectSocket(numeroOrden, token,
       (data) => {
