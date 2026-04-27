@@ -89,9 +89,9 @@ import api from '@/services/api'
 import { useRouter } from 'vue-router'
 import { connectSocket, disconnectSocket } from '@/services/socket'
 
-import keycloak from '@/services/keycloak' 
+import keycloak from '@/services/keycloak'
 
-const ordenes = ref<any[]>([]) 
+const ordenes = ref<any[]>([])
 const loading = ref(true)
 const filtroActual = ref('TODOS')
 const router = useRouter()
@@ -111,23 +111,24 @@ const ordenesFiltradas = computed(() => {
 })
 
 function formatEstadoTexto(estado: string) {
+  if (!estado) return '';
   return estado.split('_').slice(2).join(' ')
 }
 
 function getColorEstado(estado: string) {
   if (!estado) return 'bg-gray-200'
-  
+
   if (estado.includes('ESTADO_1')) return 'bg-gray-400'
   if (estado.includes('ESTADO_2')) return 'bg-orange-500'
   if (estado.includes('ESTADO_3')) return 'bg-blue-600'
   if (estado.includes('ESTADO_4')) return 'bg-green-500'
-  
+
   return 'bg-gray-200'
 }
 
 async function fetchOrdenes() {
   try {
-    
+
     //implementado con keycloack
     const res = await api.get('/orden')
     ordenes.value = res.data
@@ -148,7 +149,7 @@ onMounted(async () => {
   if (keycloak.token) {
     connectSocket('orden', keycloak.token, (data) => {
       console.log("¡Alarma de nueva orden recibida! Recargando lista...");
-      fetchOrdenes(); 
+      fetchOrdenes();
     });
   }
 })
