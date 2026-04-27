@@ -126,11 +126,31 @@ function getColorEstado(estado: string | undefined | null) {
 }
 
 async function fetchOrdenes() {
+  loading.value = true
   try {
     const res = await api.get('/orden')
-    ordenes.value = res.data
+
+    // 1. Si por algún error de cabeceras llega como texto, lo forzamos a JSON
+    let data = res.data
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data)
+      } catch (e) {
+        console.error("No se pudo parsear el texto de la API a JSON", e)
+      }
+    }
+
+    // 2. Asignación directa. Ya vimos en tu log que el backend manda el Array directo.
+    if (Array.isArray(data)) {
+      ordenes.value = data
+    } else {
+      // Por si viene envuelto en algo más
+      ordenes.value = data?.content || data?.data || []
+    }
+
   } catch (err) {
     console.error('Error al traer órdenes:', err)
+    ordenes.value = []
   } finally {
     loading.value = false
   }
