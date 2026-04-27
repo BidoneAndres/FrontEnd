@@ -212,8 +212,10 @@
                 <p class="text-xs text-gray-600 mt-1">{{ formatFecha(alarma.tiempo) }}</p>
               </div>
               <div class="text-right space-y-2">
-                <span class="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full uppercase animate-pulse">Pendiente</span>
-                <button @click="aceptarAlarma(alarma.id)" class="block w-full my-2 px-4 py-2 text-green-600 hover:text-green-700 text-xs font-bold rounded-lg transition">ACEPTAR</button>
+                <span
+                  class="px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full uppercase animate-pulse">Pendiente</span>
+                <button @click="aceptarAlarma(alarma.id)"
+                  class="block w-full my-2 px-4 py-2 text-green-600 hover:text-green-700 text-xs font-bold rounded-lg transition">ACEPTAR</button>
               </div>
             </div>
           </div>
@@ -232,7 +234,8 @@
             <div v-for="(carga, index) in historialCargas" :key="index"
               class="flex items-center justify-between p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white transition-all">
               <div class="flex flex-col">
-                <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">{{ carga.timestamp?.split(' ')[1] || '00:00:00' }}</span>
+                <span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">{{ carga.timestamp?.split('
+                  ')[1] || '00:00:00' }}</span>
                 <span class="text-sm font-bold text-gray-900">{{ carga.masaAcumulada }} kg</span>
               </div>
               <div class="text-right grid grid-cols-2 gap-x-4">
@@ -337,12 +340,26 @@ function updateTiempoTranscurrido() {
 
 async function fetchOrden() {
   try {
-    //Implementado ya con keycloack 
     const res = await api.get(`/orden/${numeroOrden}`)
-    orden.value = res.data
-    if (res.data.ultimaMasaAcumulada) {
-      masaActual.value = res.data.ultimaMasaAcumulada;
+
+    // 1. Forzar a JSON si llega como texto
+    let data = res.data
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data) } catch (e) { }
     }
+
+    // 2. Asignación segura (por si el backend manda un array de 1 elemento o el objeto directo)
+    if (Array.isArray(data)) {
+      orden.value = data[0] || {}
+    } else {
+      orden.value = data?.content || data?.data || data || {}
+    }
+
+    // 3. Cargar datos dependientes
+    if (orden.value.ultimaMasaAcumulada) {
+      masaActual.value = orden.value.ultimaMasaAcumulada;
+    }
+
     if (orden.value.id) {
       await fetchHistorial(orden.value.numeroOrden)
       await fetchAlarmas(orden.value.id)
@@ -355,7 +372,7 @@ async function fetchOrden() {
 async function aceptarAlarma(idAlarma) {
   try {
 
-    //Tambien implementado con keycloack    
+    //Tambien implementado con keycloack
     await api.post("/orden/set-estado-alarma?estado=ACEPTADA", { id: idAlarma });
     alert("Alarma aceptada ")
     await fetchAlarmas(orden.value.id)
@@ -363,37 +380,40 @@ async function aceptarAlarma(idAlarma) {
     console.error('Error tocando el boton:', err)
   }
 }
-
 async function fetchAlarmas(idOrden) {
   try {
-    //const token = localStorage.getItem('token')
-    //if (!token) return
-    //const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/alarmas?idOrden=${idOrden}&size=20`, { headers: { 'Authorization': `Bearer ${token}` } })
-    
-    //Esto tambien esta implementado con keycloack
     const res = await api.get(`/alarmas?idOrden=${idOrden}&size=20`)
-    alarmas.value = res.data.alarmas
+
+    let data = res.data
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data) } catch (e) { }
+    }
+
+    alarmas.value = data?.alarmas || []
   } catch (err) {
-    console.error('Error cargando alarma:', err)
+    console.error('Error cargando alarmas:', err)
   }
 }
-
 async function fetchHistorial(nroOrden) {
   try {
-    //const token = localStorage.getItem('token')
-    //const res = await axios.get(`https://cernikiw3.chickenkiller.com/api/v1/carga/${nroOrden}`, { headers: { 'Authorization': `Bearer ${token}` } })
-    
-    //Implementado con keycloack
     const res = await api.get(`/carga/${nroOrden}`)
-    
-    const historial = res.data
+
+    let data = res.data
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data) } catch (e) {}
+    }
+
+    const historial = Array.isArray(data) ? data : (data?.content || data?.data || [])
+
     if (historial && historial.length > 0) {
       historialCargas.value = [...historial].reverse().slice(0, 20)
       const ultimo = historial[historial.length - 1]
+
       temperatura.value = ultimo.temperatura || 0
       caudal.value = ultimo.caudal || 0
       densidad.value = ultimo.densidadProducto || 0
       if (ultimo.masaAcumulada) { masaActual.value = ultimo.masaAcumulada; }
+
       const labels = historial.map(d => d.timestamp ? d.timestamp.split(' ')[1] : 'S/T')
       if (chartInstance) {
         chartInstance.data.labels = labels
@@ -415,47 +435,47 @@ function toggleDetalle() { showDetalle.value = !showDetalle.value }
 
 onMounted(async () => {
   try {
-    
+
     await keycloak.updateToken(30)
     const token = keycloak.token
-    
-    
+
+
     if (!token) {
       console.error("No hay token de Keycloak disponible");
       return;
     }
 
     await nextTick()
-    
-    
+
+
     const commonOptions = {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: { y: { grid: { color: '#f3f4f6' }, beginAtZero: false }, x: { grid: { display: false } } }
     }
-    
+
     chartInstance = new Chart(chartCanvas.value, {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Temp', data: [], borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
-    
+
     chartCaudalInstance = new Chart(chartCaudalCanvas.value, {
       type: 'line',
       data: { labels: [], datasets: [{ label: 'Caudal', data: [], borderColor: 'rgb(37, 99, 235)', backgroundColor: 'rgba(37, 99, 235, 0.05)', tension: 0.4, fill: true, pointRadius: 0 }] },
       options: commonOptions
     })
 
-    
+
     await fetchOrden()
-    
-    
+
+
     timerInterval = setInterval(updateTiempoTranscurrido, 1000);
-    
-    
+
+
     connectSocket(numeroOrden, token,
       (data) => {
-        if (data.masaAcumulada !== undefined) { 
+        if (data.masaAcumulada !== undefined) {
           masaActual.value = data.masaAcumulada;
           const ahoraString = new Date().toISOString().replace('T', ' ').split('.')[0];
           historialCargas.value.unshift({ ...data, timestamp: ahoraString });
@@ -486,8 +506,8 @@ onMounted(async () => {
         const nuevaAlarma = { id: dataAlarma.id, estado: dataAlarma.estado, tiempo: dataAlarma.fechaCreacion };
         alarmas.value.unshift(nuevaAlarma);
       })
-  } catch (err) { 
-    console.error("Error en monitor:", err) 
+  } catch (err) {
+    console.error("Error en monitor:", err)
   }
 })
 
