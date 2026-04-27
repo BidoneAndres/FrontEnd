@@ -13,49 +13,58 @@
         </div>
 
         <div class="flex flex-wrap gap-2 p-1 bg-gray-200 rounded-2xl">
-          <button v-for="estado in estadosConfig" :key="estado.id" @click="filtroActual = estado.id" :class="[
-            'px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-tighter',
-            filtroActual === estado.id
-              ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100'
-              : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
-          ]">
+          <button
+            v-for="estado in estadosConfig"
+            :key="estado.id"
+            @click="filtroActual = estado.id"
+            :class="[
+              'px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 uppercase tracking-tighter',
+              filtroActual === estado.id
+                ? 'bg-white text-gray-900 shadow-sm scale-105 border border-gray-100'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+            ]"
+          >
             {{ estado.shortLabel }}
           </button>
         </div>
       </div>
 
       <div v-if="!loading && ordenesFiltradas.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="orden in ordenesFiltradas" :key="orden.id" @click="irAlMonitor(orden.id)"
-          class="group bg-white border border-gray-200 p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer relative">
-          <div :class="['absolute left-0 top-12 bottom-12 w-1.5 rounded-r-full', getColorEstado(orden.estado)]"></div>
+        <div
+          v-for="orden in ordenesFiltradas"
+          :key="orden.id"
+          @click="irAlMonitor(orden.id)"
+          class="group bg-white border border-gray-200 p-8 rounded-[2rem] shadow-sm hover:shadow-2xl hover:border-gray-900 transition-all duration-500 cursor-pointer relative"
+        >
+          <div :class="['absolute left-0 top-12 bottom-12 w-1.5 rounded-r-full', getColorEstado(orden?.estado)]"></div>
 
           <div class="flex justify-between items-start mb-6">
             <div>
               <span class="text-[10px] font-mono text-gray-400 uppercase tracking-widest block">Código Sistema</span>
               <span class="text-lg font-bold text-gray-900">N° {{ orden.numeroOrden || orden.id }}</span>
             </div>
-            <div
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 border border-gray-100 font-bold text-gray-400 group-hover:border-gray-900 group-hover:text-gray-900 transition-colors">
-              {{ orden.estado?.split('_')[1] || '-' }}
+
+            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 border border-gray-100 font-bold text-gray-400 group-hover:border-gray-900 group-hover:text-gray-900 transition-colors">
+              {{ orden?.estado?.split('_')[1] || '-' }}
             </div>
           </div>
 
           <h3 class="text-2xl font-inter-tight font-bold text-gray-900 mb-2">
-            {{ orden.cliente?.razonSocial || 'Sin Razón Social' }}
+            {{ orden?.cliente?.razonSocial || 'Sin Razón Social' }}
           </h3>
 
           <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-6">
-            {{ formatEstadoTexto(orden.estado) }}
+            {{ formatEstadoTexto(orden?.estado) }}
           </p>
 
           <div class="mt-6 pt-6 border-t border-gray-100 space-y-3 font-inter">
             <div class="flex justify-between">
               <span class="text-xs text-gray-400 uppercase font-bold">Patente</span>
-              <span class="text-xs font-bold text-gray-800">{{ orden.camion?.patente || '---' }}</span>
+              <span class="text-xs font-bold text-gray-800">{{ orden?.camion?.patente || '---' }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-xs text-gray-400 uppercase font-bold">Chofer</span>
-              <span class="text-xs font-bold text-gray-800">{{ orden.chofer?.nombre || 'No asignado' }}</span>
+              <span class="text-xs font-bold text-gray-800">{{ orden?.chofer?.nombre || 'No asignado' }}</span>
             </div>
           </div>
 
@@ -66,12 +75,9 @@
         </div>
       </div>
 
-      <div v-else-if="!loading"
-        class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+      <div v-else-if="!loading" class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
         <p class="text-gray-400 font-inter-tight text-xl mb-6">No hay registros en esta etapa.</p>
-        <button @click="filtroActual = 'TODOS'"
-          class="px-8 py-3 bg-gray-900 text-white rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Ver
-          historial completo</button>
+        <button @click="filtroActual = 'TODOS'" class="px-8 py-3 bg-gray-900 text-white rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Ver historial completo</button>
       </div>
     </div>
   </div>
@@ -82,7 +88,6 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import api from '@/services/api'
 import { useRouter } from 'vue-router'
 import { connectSocket, disconnectSocket } from '@/services/socket'
-
 import keycloak from '@/services/keycloak'
 
 const ordenes = ref<any[]>([])
@@ -101,15 +106,15 @@ const estadosConfig = [
 
 const ordenesFiltradas = computed(() => {
   if (filtroActual.value === 'TODOS') return ordenes.value
-  return ordenes.value.filter(o => o.estado === filtroActual.value)
+  return ordenes.value.filter(o => o?.estado === filtroActual.value)
 })
 
-function formatEstadoTexto(estado: string) {
-  if (!estado) return '';
+function formatEstadoTexto(estado: string | undefined | null) {
+  if (!estado) return 'SIN ESTADO'
   return estado.split('_').slice(2).join(' ')
 }
 
-function getColorEstado(estado: string) {
+function getColorEstado(estado: string | undefined | null) {
   if (!estado) return 'bg-gray-200'
 
   if (estado.includes('ESTADO_1')) return 'bg-gray-400'
@@ -122,8 +127,6 @@ function getColorEstado(estado: string) {
 
 async function fetchOrdenes() {
   try {
-
-    //implementado con keycloack
     const res = await api.get('/orden')
     ordenes.value = res.data
   } catch (err) {
@@ -142,8 +145,23 @@ onMounted(async () => {
 
   if (keycloak.token) {
     connectSocket('orden', keycloak.token, (data) => {
-      console.log("¡Alarma de nueva orden recibida! Recargando lista...");
-      fetchOrdenes();
+      console.log("Mensaje de socket recibido:", data);
+
+      // OPTIMIZACIÓN: Actualizar localmente en lugar de saturar la API
+      if (data && data.id) {
+        const index = ordenes.value.findIndex(o => o.id === data.id);
+        if (index !== -1) {
+          // Si la orden ya existe, la reemplazamos con los datos nuevos
+          ordenes.value[index] = data;
+        } else {
+          // Si es una orden nueva, la agregamos al arreglo
+          ordenes.value.push(data);
+        }
+      } else {
+        // Solo como último recurso, si el payload no trae la orden completa
+        console.warn("El socket no envió la orden completa. Se sugiere arreglar el backend.");
+        fetchOrdenes();
+      }
     });
   }
 })
@@ -154,11 +172,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.font-inter-tight {
-  font-family: 'Inter Tight', sans-serif;
-}
-
-.font-inter {
-  font-family: 'Inter', sans-serif;
-}
+.font-inter-tight { font-family: 'Inter Tight', sans-serif; }
+.font-inter { font-family: 'Inter', sans-serif; }
 </style>
